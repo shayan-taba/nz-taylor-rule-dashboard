@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model QuarterlyData {
+  gdp               Float?
+  gdpQpc            Float?   @map("gdp_qpc")
+  gdpApc            Float?   @map("gdp_apc")
+  outputGap         Float?   @map("output_gap")
+  urate             Float?
+  cpiIndex          Float?   @map("cpi_index")
+  cpiQpc            Float?   @map("cpi_qpc")
+  cpiApc            Float?   @map("cpi_apc")
+  ocr               Float?
+  nzdUsd            Float?   @map("nzd_usd")
+  rStar             Float?   @map("r_star")
+  piStar            Float?   @map("pi_star")
+  inflationTrimmed  Float?   @map("inflation_trimmed")
+  inflationSectoral Float?   @map("inflation_sectoral")
+  inflationCoreAvg  Float?   @map("inflation_core_avg")
+  dataVintage       String?  @map("data_vintage")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  date              DateTime @id @db.Date
+
+  @@map("quarterly_data")
+}
+
+model RegimeDefinition {
+  id          String    @id
+  type        String
+  label       String
+  startDate   DateTime  @map("start_date") @db.Timestamptz(6)
+  endDate     DateTime? @map("end_date") @db.Timestamptz(6)
+  description String?
+
+  @@map("regime_definitions")
+}

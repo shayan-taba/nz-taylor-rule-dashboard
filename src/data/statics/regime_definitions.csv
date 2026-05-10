@@ -1,0 +1,14 @@
+id,type,label,start_date,end_date,description
+brash,governor,Don Brash,1988-03-01,2002-09-17,OCR introduction and early inflation targeting
+bollard,governor,Alan Bollard,2002-09-17,2012-09-26,GFC response and post-GFC recovery
+wheeler,governor,Graeme Wheeler,2012-09-26,2017-09-27,Post-GFC normalisation
+spencer,governor,Grant Spencer,2017-09-27,2018-03-27,Acting governor
+orr,governor,Adrian Orr,2018-03-27,,Current governor
+ocr_era,episode,OCR Introduction Era,1999-04-01,2002-12-31,First years of OCR regime
+housing_boom,episode,Housing & Credit Boom,2003-01-01,2007-12-31,Pre-GFC credit expansion
+gfc,episode,GFC Response,2008-01-01,2009-12-31,Global financial crisis
+christchurch,episode,Christchurch Earthquakes,2010-01-01,2012-12-31,Post-earthquake rebuild period
+post_gfc,episode,Post-GFC Normalisation,2012-01-01,2019-12-31,Extended low-rate environment
+covid,episode,COVID Emergency,2020-01-01,2021-12-31,Pandemic emergency easing
+inflation_surge,episode,Post-COVID Inflation,2022-01-01,2023-06-30,Inflation overshoot
+tightening,episode,Tightening Cycle,2023-07-01,,Aggressive OCR increases
