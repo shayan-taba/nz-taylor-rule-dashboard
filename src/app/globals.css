@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:           #0a0a0b;
+  --bg-2:         #111113;
+  --bg-3:         #18181c;
+  --border:       #232329;
+  --border-2:     #2e2e36;
+  --text:         #e8e8ed;
+  --text-2:       #9090a0;
+  --text-3:       #55556a;
+  --accent:       #00d4aa;
+  --accent-dim:   #00d4aa22;
+  --accent-2:     #ff6b35;
+  --accent-2-dim: #ff6b3522;
+  --hawkish:      #ff6b35;
+  --dovish:       #4da6ff;
+  --taylor:       #00d4aa;
+  --inertial:     #a78bfa;
+  --ocr:          #e8e8ed;
+  --pi-star:      #55556a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 14px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: 'Syne', sans-serif; }
+.font-serif   { font-family: 'Libre Baskerville', serif; }
+.font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-2); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+/* Recharts overrides */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--border) !important;
+}
+.recharts-tooltip-wrapper { outline: none; }
+.recharts-default-legend  { display: none; }

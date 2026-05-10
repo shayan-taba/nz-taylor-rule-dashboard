@@ -104,7 +104,6 @@ export async function POST(request: NextRequest) {
       inertialRate,
       deviation:     result.deviation,
       compNeutral:   result.compNeutral,
-    //   compInflation: result.compInflation,
       compInfGap:    result.compInfGap,
       compOutputGap: result.compOutputGap,
     };
