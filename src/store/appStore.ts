@@ -52,7 +52,7 @@ export const useAppStore = create<AppStore>((set, get) => {
     regimes:           [],
     activeRegime:      null,
     dateRange:         { start: START_DATE, end: today },
-    inflationMeasure:  "inflationCoreAvg",
+    inflationMeasure:  "cpiApc",
     params:            DEFAULT_PARAMS,
     useRStarOverride:  false,
     usePiStarOverride: false,

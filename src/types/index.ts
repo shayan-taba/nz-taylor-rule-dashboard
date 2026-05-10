@@ -75,3 +75,24 @@ export interface ComputeResponse {
   ols:         OlsResult | null;
   descriptive: DescriptiveStats | null;
 }
+
+export type ExportFormat = "csv" | "json";
+
+export interface ExportRow {
+  date:              string;
+  ocr:               number | null;
+  taylorRate:        number | null;
+  inertialRate:      number | null;
+  deviation:         number | null;
+  compNeutral:       number | null;
+  compInfGap:        number | null;
+  compOutputGap:     number | null;
+  outputGap:         number | null;
+  inflation:         number | null;
+  inflationMeasure:  string;
+  rStar:             number | null;
+  piStar:            number | null;
+  urate:             number | null;
+  nzdUsd:            number | null;
+  gdpApc:            number | null;
+}
