@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useAppStore } from "./appStore";
+import { useAppStore } from "../../store/appStore";
 
 export function DateRangePicker() {
   const dateRange    = useAppStore((s) => s.dateRange);

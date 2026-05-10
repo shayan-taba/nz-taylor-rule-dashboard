@@ -1,9 +1,11 @@
 id,type,label,start_date,end_date,description
-brash,governor,Don Brash,1988-03-01,2002-09-17,OCR introduction and early inflation targeting
-bollard,governor,Alan Bollard,2002-09-17,2012-09-26,GFC response and post-GFC recovery
-wheeler,governor,Graeme Wheeler,2012-09-26,2017-09-27,Post-GFC normalisation
-spencer,governor,Grant Spencer,2017-09-27,2018-03-27,Acting governor
-orr,governor,Adrian Orr,2018-03-27,,Current governor
+brash,governor,Don Brash,1988-09-01,2002-04-26,Inflation targeting pioneer and pre-OCR transition
+bollard,governor,Alan Bollard,2002-09-23,2012-09-25,GFC response and post-crisis recovery
+wheeler,governor,Graeme Wheeler,2012-09-26,2017-09-27,Post-GFC normalisation and early low-inflation era
+spencer,governor,Grant Spencer (Acting),2017-10-01,2018-03-26,Interim governor between Wheeler and Orr
+orr,governor,Adrian Orr,2018-03-27,2025-03-05,COVID-era QE; inflation surge; and aggressive tightening cycle
+hawkesby,governor,Christian Hawkesby (Acting),2025-03-06,2025-11-30,Interim governor following Orr's resignation
+breman,governor,Anna Breman,2025-12-01,,Current governor
 ocr_era,episode,OCR Introduction Era,1999-04-01,2002-12-31,First years of OCR regime
 housing_boom,episode,Housing & Credit Boom,2003-01-01,2007-12-31,Pre-GFC credit expansion
 gfc,episode,GFC Response,2008-01-01,2009-12-31,Global financial crisis

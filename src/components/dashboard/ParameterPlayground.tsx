@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useAppStore } from "../../store/appStore";
-import { useDebounce } from "../../store/useDebounce";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface SliderProps {
   label:    string;

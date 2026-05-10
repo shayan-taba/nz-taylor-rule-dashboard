@@ -4,8 +4,8 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { useAppStore } from "../../store/appStore";
-import { useChartData } from "../../store/useChartData";
-import { ChartTooltip } from "../../store/Tooltip";
+import { useChartData } from "../../hooks/useChartData";
+import { ChartTooltip } from "../ui/Tooltip";
 
 // Show every Nth label to avoid crowding
 function tickFilter(data: { label: string }[], maxTicks = 12) {

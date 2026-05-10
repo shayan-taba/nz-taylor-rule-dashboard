@@ -1,7 +1,7 @@
 "use client";
 import { useMemo }                       from "react";
 import { useAppStore } from "../../store/appStore";
-import { useChartData, useLagInfo } from "../../store/useChartData";
+import { useChartData, useLagInfo } from "../../hooks/useChartData";
 import { ExportButton } from "./ExportButton";
 
 const MEASURE_LABELS: Record<string, string> = {

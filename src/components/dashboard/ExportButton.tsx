@@ -1,6 +1,6 @@
 "use client";
 import { useAppStore } from "../../store/appStore";
-import { useChartData } from "../../store/useChartData";
+import { useChartData } from "../../hooks/useChartData";
 import type { ExportFormat, ExportRow } from "../../types";
 
 interface Props {

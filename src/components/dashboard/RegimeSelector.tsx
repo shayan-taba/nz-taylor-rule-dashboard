@@ -1,18 +1,19 @@
 "use client";
-import { useAppStore }       from "./appStore";
-import type { RegimeDefinition } from "../types";
-
-const GOVERNOR_ORDER = ["brash", "bollard", "wheeler", "spencer", "orr"];
+import { useAppStore } from "../../store/appStore";
+import type { RegimeDefinition } from "../../types";
 
 export function RegimeSelector() {
   const regimes      = useAppStore((s) => s.regimes);
   const activeRegime = useAppStore((s) => s.activeRegime);
   const setRegime    = useAppStore((s) => s.setRegime);
 
-  const governors = GOVERNOR_ORDER
-    .map((id) => regimes.find((r) => r.id === id))
-    .filter(Boolean) as RegimeDefinition[];
-
+  const governors = [...regimes]
+    .filter((r) => r.type === "governor")
+    .sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() -
+        new Date(b.startDate).getTime()
+    );
   const episodes = regimes.filter((r) => r.type === "episode");
 
   const btn = (r: RegimeDefinition) => {

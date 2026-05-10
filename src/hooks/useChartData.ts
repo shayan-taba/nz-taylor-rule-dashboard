@@ -1,5 +1,5 @@
 import { useMemo }     from "react";
-import { useAppStore } from "./appStore";
+import { useAppStore } from "../store/appStore";
 import type { QuarterlyData, ComputedRow } from "../types";
 
 export interface MergedRow {

@@ -3,8 +3,8 @@ import {
   ComposedChart, Bar, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
-import { useChartData } from "../../store/useChartData";
-import { ChartTooltip } from "../../store/Tooltip";
+import { useChartData } from "../../hooks/useChartData";
+import { ChartTooltip } from "../ui/Tooltip";
 
 function tickFilter(data: { label: string }[], maxTicks = 12) {
   if (data.length <= maxTicks) return (v: string) => v;

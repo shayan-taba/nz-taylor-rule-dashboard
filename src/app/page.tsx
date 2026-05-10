@@ -1,8 +1,8 @@
 "use client";
 import { useEffect } from "react";
 import { useAppStore } from "../store/appStore";
-import { RegimeSelector } from "../store/RegimeSelector";
-import { DateRangePicker } from "../store/DateRangePicker";
+import { RegimeSelector } from "../components/dashboard/RegimeSelector";
+import { DateRangePicker } from "../components/dashboard/DateRangePicker";
 import { MetricCards } from "../components/dashboard/MetricCards";
 import { MainChart } from "../components/dashboard/MainChart";
 import { DecompositionChart } from "../components/dashboard/DecompositionChart";
