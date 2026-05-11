@@ -17,7 +17,13 @@ import { useChartData } from "../../hooks/useChartData";
 import { tickFormatter } from "../../lib/chart";
 import { ChartTooltip } from "../ui/Tooltip";
 
-export function MainChart() {
+interface Props {
+  height?: number;
+}
+
+export function MainChart({
+  height = 320,
+}: Props) {
   const showInertial =
     useAppStore((s) => s.showInertial);
 
@@ -105,7 +111,7 @@ export function MainChart() {
 
       <ResponsiveContainer
         width="100%"
-        height={300}
+        height={height}
       >
         <ComposedChart
           data={data}

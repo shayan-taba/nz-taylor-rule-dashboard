@@ -19,8 +19,13 @@ import { tickFormatter } from "../../lib/chart";
 
 import { ChartTooltip } from "../ui/Tooltip";
 
-export function DeviationChart() {
-  const data = useChartData();
+interface Props {
+  height?: number;
+}
+
+export function DeviationChart({
+  height = 320,
+}: Props) {  const data = useChartData();
 
   // Split positive/negative deviations
   const enriched = data.map((row) => ({
@@ -86,7 +91,7 @@ export function DeviationChart() {
 
       {/* Chart */}
 
-      <ResponsiveContainer width="100%" height={180}>
+      <ResponsiveContainer width="100%" height={height}>
         <ComposedChart
           data={enriched}
           margin={{

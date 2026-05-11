@@ -19,7 +19,13 @@ import { tickFormatter } from "../../lib/chart";
 
 import { ChartTooltip } from "../ui/Tooltip";
 
-export function DecompositionChart() {
+interface Props {
+  height?: number;
+}
+
+export function DecompositionChart({
+  height = 320,
+}: Props) {
   const data = useChartData();
 
   return (
@@ -108,7 +114,7 @@ export function DecompositionChart() {
 
       {/* Chart */}
 
-      <ResponsiveContainer width="100%" height={220}>
+      <ResponsiveContainer width="100%" height={height}>
         <ComposedChart
           data={data}
           margin={{
