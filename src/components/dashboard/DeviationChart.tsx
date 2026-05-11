@@ -1,54 +1,148 @@
+// src/components/dashboard/DeviationChart.tsx
+
 "use client";
+
 import {
-  ComposedChart, Area, Line, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
+  ComposedChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
+
 import { useChartData } from "../../hooks/useChartData";
-import { tickFilter } from "../../lib/chart";
+
+import { tickFormatter } from "../../lib/chart";
+
 import { ChartTooltip } from "../ui/Tooltip";
 
 export function DeviationChart() {
-  const data      = useChartData();
-  const formatter = tickFilter(data);
+  const data = useChartData();
 
-  // Split into hawkish (positive) and dovish (negative) for dual colouring
+  // Split positive/negative deviations
   const enriched = data.map((row) => ({
     ...row,
-    devPositive: row.deviation !== null && row.deviation > 0  ? row.deviation : null,
-    devNegative: row.deviation !== null && row.deviation <= 0 ? row.deviation : null,
+
+    devPositive:
+      row.deviation !== null && row.deviation > 0 ? row.deviation : null,
+
+    devNegative:
+      row.deviation !== null && row.deviation <= 0 ? row.deviation : null,
   }));
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-        <span style={{ fontSize: "10px", letterSpacing: "0.1em", color: "var(--text-3)" }}>
+      {/* Header */}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+
+          alignItems: "center",
+
+          marginBottom: 12,
+        }}
+      >
+        <span
+          style={{
+            fontSize: "10px",
+
+            letterSpacing: "0.1em",
+
+            color: "var(--text-3)",
+          }}
+        >
           OCR DEVIATION FROM TAYLOR RULE — pp
         </span>
-        <div style={{ display: "flex", gap: 16, fontSize: "10px" }}>
-          <span style={{ color: "var(--hawkish)" }}>▲ Hawkish (OCR &gt; Taylor)</span>
-          <span style={{ color: "var(--dovish)"  }}>▼ Dovish  (OCR &lt; Taylor)</span>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            fontSize: "10px",
+          }}
+        >
+          <span
+            style={{
+              color: "var(--hawkish)",
+            }}
+          >
+            ▲ Hawkish
+          </span>
+
+          <span
+            style={{
+              color: "var(--dovish)",
+            }}
+          >
+            ▼ Dovish
+          </span>
         </div>
       </div>
 
+      {/* Chart */}
+
       <ResponsiveContainer width="100%" height={180}>
-        <ComposedChart data={enriched} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
+        <ComposedChart
+          data={enriched}
+          margin={{
+            top: 4,
+            right: 20,
+            bottom: 0,
+            left: -10,
+          }}
+        >
           <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
+
+          {/* X Axis — Continuous Time */}
+
           <XAxis
-            dataKey="label"
-            tickFormatter={formatter}
-            tick={{ fontSize: 10, fill: "var(--text-3)", fontFamily: "inherit" }}
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={["dataMin", "dataMax"]}
+            tickCount={10}
+            interval="preserveStartEnd"
+            allowDuplicatedCategory={false}
+            minTickGap={60}
+            padding={{ left: 8, right: 24 }}
+            tickFormatter={tickFormatter}
+            tick={{
+              fontSize: 10,
+              fill: "var(--text-3)",
+              fontFamily: "inherit",
+            }}
             axisLine={{ stroke: "var(--border)" }}
             tickLine={false}
           />
+
+          {/* Y Axis */}
+
           <YAxis
-            tick={{ fontSize: 10, fill: "var(--text-3)", fontFamily: "inherit" }}
+            tick={{
+              fontSize: 10,
+              fill: "var(--text-3)",
+              fontFamily: "inherit",
+            }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${v > 0 ? "+" : ""}${v}pp`}
             width={48}
           />
+
+          {/* Tooltip */}
+
           <Tooltip content={<ChartTooltip />} />
+
+          {/* Zero line */}
+
           <ReferenceLine y={0} stroke="var(--border-2)" strokeWidth={1} />
+
+          {/* Positive */}
 
           <Area
             dataKey="devPositive"
@@ -59,6 +153,9 @@ export function DeviationChart() {
             strokeWidth={1.5}
             connectNulls={false}
           />
+
+          {/* Negative */}
+
           <Area
             dataKey="devNegative"
             name="Dovish deviation"

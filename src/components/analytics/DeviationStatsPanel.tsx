@@ -1,3 +1,5 @@
+// src/components/analytics/DeviationStatsPanel.tsx
+
 "use client";
 import { useMemo }      from "react";
 import { useChartData } from "../../hooks/useChartData";

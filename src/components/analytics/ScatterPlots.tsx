@@ -1,3 +1,5 @@
+// src/components/analytics/ScatterPlots.tsx
+
 "use client";
 import { useMemo }      from "react";
 import { useAppStore } from "../../store/appStore";

@@ -1,68 +1,181 @@
+// src/components/dashboard/MainChart.tsx
+
 "use client";
+
 import {
-  ComposedChart, Line, Area, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
+
 import { useAppStore } from "../../store/appStore";
 import { useChartData } from "../../hooks/useChartData";
-import { tickFilter } from "../../lib/chart";
+import { tickFormatter } from "../../lib/chart";
 import { ChartTooltip } from "../ui/Tooltip";
 
 export function MainChart() {
-  const showInertial = useAppStore((s) => s.showInertial);
-  const data         = useChartData();
+  const showInertial =
+    useAppStore((s) => s.showInertial);
 
-  // Pi* step changes — for reference lines
-  const piStarChanges = data.reduce<{ date: string; value: number }[]>((acc, row, i) => {
-    if (i === 0) return [{ date: row.date, value: row.piStar ?? 2 }];
-    if (row.piStar !== data[i - 1].piStar) acc.push({ date: row.date, value: row.piStar ?? 2 });
-    return acc;
-  }, []);
-
-  const formatter = tickFilter(data);
+  const data = useChartData();
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-        <span style={{ fontSize: "10px", letterSpacing: "0.1em", color: "var(--text-3)" }}>
+      {/* ───────────────────────────────────── */}
+      {/* Header */}
+      {/* ───────────────────────────────────── */}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
+        <span
+          style={{
+            fontSize: "10px",
+            letterSpacing: "0.1em",
+            color: "var(--text-3)",
+          }}
+        >
           INTEREST RATES — %
         </span>
+
         {/* Legend */}
-        <div style={{ display: "flex", gap: 16, fontSize: "10px", color: "var(--text-2)" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            fontSize: "10px",
+            color: "var(--text-2)",
+          }}
+        >
           {[
-            { color: "var(--ocr)",      label: "OCR (Actual)" },
-            { color: "var(--taylor)",   label: "Taylor Rule" },
-            { color: "var(--inertial)", label: "Inertial Taylor" },
-            { color: "var(--pi-star)",  label: "π* Target" },
+            {
+              color: "var(--ocr)",
+              label: "OCR (Actual)",
+            },
+
+            {
+              color: "var(--taylor)",
+              label: "Taylor Rule",
+            },
+
+            {
+              color: "var(--inertial)",
+              label: "Inertial Taylor",
+            },
+
+            {
+              color: "var(--pi-star)",
+              label: "π* Target",
+            },
           ].map(({ color, label }) => (
-            <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              <div style={{ width: 16, height: 2, background: color }} />
+            <div
+              key={label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+              }}
+            >
+              <div
+                style={{
+                  width: 16,
+                  height: 2,
+                  background: color,
+                }}
+              />
+
               <span>{label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}>
-        <ComposedChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
-          <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
+      {/* ───────────────────────────────────── */}
+      {/* Chart */}
+      {/* ───────────────────────────────────── */}
+
+      <ResponsiveContainer
+        width="100%"
+        height={300}
+      >
+        <ComposedChart
+          data={data}
+          margin={{
+            top: 4,
+            right: 20,
+            bottom: 0,
+            left: -10,
+          }}
+        >
+          {/* Grid */}
+          <CartesianGrid
+            strokeDasharray="0"
+            stroke="var(--border)"
+          />
+
+          {/* ───────────────────────────── */}
+          {/* X Axis — CONTINUOUS TIME */}
+          {/* ───────────────────────────── */}
+
           <XAxis
-            dataKey="label"
-            tickFormatter={formatter}
-            tick={{ fontSize: 10, fill: "var(--text-3)", fontFamily: "inherit" }}
-            axisLine={{ stroke: "var(--border)" }}
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={["dataMin", "dataMax"]}
+            tickCount={10}
+            interval="preserveStartEnd"
+            allowDuplicatedCategory={false}
+            minTickGap={60}
+            padding={{ left: 8, right: 24 }}
+            tickFormatter={tickFormatter}
+            tick={{
+              fontSize: 10,
+              fill: "var(--text-3)",
+              fontFamily: "inherit",
+            }}
+            axisLine={{
+              stroke: "var(--border)",
+            }}
             tickLine={false}
           />
+
+          {/* ───────────────────────────── */}
+          {/* Y Axis */}
+          {/* ───────────────────────────── */}
+
           <YAxis
-            tick={{ fontSize: 10, fill: "var(--text-3)", fontFamily: "inherit" }}
+            tick={{
+              fontSize: 10,
+              fill: "var(--text-3)",
+              fontFamily: "inherit",
+            }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${v}%`}
             width={40}
           />
-          <Tooltip content={<ChartTooltip />} />
 
-          {/* π* as faint step line */}
+          {/* ───────────────────────────── */}
+          {/* Tooltip */}
+          {/* ───────────────────────────── */}
+
+          <Tooltip
+            content={<ChartTooltip />}
+          />
+
+          {/* ───────────────────────────── */}
+          {/* π* Target */}
+          {/* ───────────────────────────── */}
+
           <Line
             dataKey="piStar"
             name="π* Target"
@@ -72,6 +185,10 @@ export function MainChart() {
             strokeDasharray="2 4"
             connectNulls
           />
+
+          {/* ───────────────────────────── */}
+          {/* Inertial Taylor */}
+          {/* ───────────────────────────── */}
 
           {showInertial && (
             <Line
@@ -85,6 +202,10 @@ export function MainChart() {
             />
           )}
 
+          {/* ───────────────────────────── */}
+          {/* Taylor Rule */}
+          {/* ───────────────────────────── */}
+
           <Line
             dataKey="taylorRate"
             name="Taylor Rule"
@@ -94,6 +215,10 @@ export function MainChart() {
             strokeDasharray="6 3"
             connectNulls
           />
+
+          {/* ───────────────────────────── */}
+          {/* OCR */}
+          {/* ───────────────────────────── */}
 
           <Line
             dataKey="ocr"

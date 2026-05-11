@@ -1,3 +1,5 @@
+// src/components/analytics/RollingStatsChart.tsx
+
 "use client";
 import { useChartData } from "../../hooks/useChartData";
 import {
@@ -5,16 +7,10 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { ChartTooltip } from "../ui/Tooltip";
-
-function tickFilter(data: { label: string }[], maxTicks = 14) {
-  if (data.length <= maxTicks) return (_: string, i: number) => data[i]?.label ?? "";
-  const step = Math.ceil(data.length / maxTicks);
-  return (_: string, i: number) => (i % step === 0 ? data[i]?.label ?? "" : "");
-}
+import { tickFormatter } from "../../lib/chart";
 
 export function RollingStatsChart() {
-  const data      = useChartData();
-  const formatter = tickFilter(data);
+  const data = useChartData();
 
   return (
     <div style={{
@@ -43,11 +39,19 @@ export function RollingStatsChart() {
 
         {/* Panel 1: rolling mean */}
         <ResponsiveContainer width="100%" height={180}>
-          <ComposedChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
+          <ComposedChart data={data} margin={{ top: 4, right: 20, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
             <XAxis
-              dataKey="label"
-              tickFormatter={formatter}
+              dataKey="timestamp"
+              type="number"
+              scale="time"
+              domain={["dataMin", "dataMax"]}
+              tickCount={8}
+              interval="preserveStartEnd"
+              allowDuplicatedCategory={false}
+              minTickGap={60}
+              padding={{ left: 8, right: 24 }}
+              tickFormatter={tickFormatter}
               tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
               axisLine={{ stroke: "var(--border)" }}
               tickLine={false}
@@ -76,11 +80,19 @@ export function RollingStatsChart() {
 
         {/* Panel 2: rolling std */}
         <ResponsiveContainer width="100%" height={140}>
-          <ComposedChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
+          <ComposedChart data={data} margin={{ top: 4, right: 20, bottom: 0, left: -10 }}>
             <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
             <XAxis
-              dataKey="label"
-              tickFormatter={formatter}
+              dataKey="timestamp"
+              type="number"
+              scale="time"
+              domain={["dataMin", "dataMax"]}
+              tickCount={8}
+              interval="preserveStartEnd"
+              allowDuplicatedCategory={false}
+              minTickGap={60}
+              padding={{ left: 8, right: 24 }}
+              tickFormatter={tickFormatter}
               tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
               axisLine={{ stroke: "var(--border)" }}
               tickLine={false}
