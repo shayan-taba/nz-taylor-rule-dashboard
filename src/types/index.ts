@@ -1,3 +1,5 @@
+// src/types/index.ts
+
 export interface QuarterlyData {
   date:              string;
   gdp:               number | null;
@@ -48,15 +50,15 @@ export type InflationMeasure =
 export interface TaylorParams {
   alpha:           number;
   beta:            number;
-  rStarOverride?:  number;
+  realRStarOverride?:  number;
   piStarOverride?: number;
 }
 
 export interface OlsContext {
   inflationMeasure: InflationMeasure;
-  useRStarOverride: boolean;
+  userealRStarOverride: boolean;
   usePiStarOverride: boolean;
-  rStarOverride?: number;
+  realRStarOverride?: number;
   piStarOverride?: number;
 }
 

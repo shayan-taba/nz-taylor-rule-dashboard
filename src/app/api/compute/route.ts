@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as {
     alpha?: number;
     beta?: number;
-    rStarOverride?: number;
+    realRStarOverride?: number;
     piStarOverride?: number;
     inflationMeasure?: InflationMeasure;
     startDate?: string;
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   const {
     alpha = 0.5,
     beta = 0.5,
-    rStarOverride,
+    realRStarOverride,
     piStarOverride,
     inflationMeasure = "inflationCoreAvg",
     startDate,
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     runDescriptive = false,
   } = body;
 
-  const params: TaylorParams = { alpha, beta, rStarOverride, piStarOverride };
+  const params: TaylorParams = { alpha, beta, realRStarOverride, piStarOverride };
 
   const rows = await db.quarterlyData.findMany({
     where: {
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
   const taylorRates = series.map((s) => s.taylorRate);
   const inertialRates = series.map((s) => s.inertialRate);
 
-  const ocrFitR2   = computeSeriesR2(actualOcrs, taylorRates);
+  const ocrFitR2 = computeSeriesR2(actualOcrs, taylorRates);
   const inertialR2 = computeSeriesR2(actualOcrs, inertialRates);
 
   // ── Optional OLS ──────────────────────────────────────────────────
@@ -161,7 +161,11 @@ export async function POST(request: NextRequest) {
       try {
         // Resolve r* per row (respects override)
         const lhsValues = valid.map((r) => {
-          const effectiveRStar = rStarOverride ?? r.rStar;
+          const inflation = r[inflationMeasure] as number;
+          const effectiveRStar =
+            realRStarOverride !== undefined
+              ? realRStarOverride + inflation
+              : r.rStar;
           return r.ocr - effectiveRStar;
         });
 

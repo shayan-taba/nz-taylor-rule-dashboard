@@ -1,73 +1,143 @@
 // src/components/dashboard/ParameterPlayground.tsx
 
 "use client";
-import { useRef } from "react";
+import React from "react";
 import { useAppStore } from "../../store/appStore";
 import { useDebounce } from "../../hooks/useDebounce";
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Semantic colours
+// ─────────────────────────────────────────────────────────────────────────────
+
+const RESPONSE_COLOR = "var(--accent)";
+const RESPONSE_BG = "var(--accent-dim)";
+
+const OVERRIDE_COLOR = "#7c9cff";
+const OVERRIDE_BG = "rgba(124,156,255,0.16)";
+
+const SUCCESS_COLOR = "#7ee2a8";
+const SUCCESS_BG = "rgba(80,200,120,0.08)";
+const SUCCESS_BORDER = "rgba(80,200,120,0.35)";
+
+const WARNING_COLOR = "#ffcc73";
+const WARNING_BG = "rgba(255,190,90,0.08)";
+const WARNING_BORDER = "rgba(255,190,90,0.35)";
+
+// ─── Sub-components ─────────────────────────────────────────────────────────
 
 function SectionLabel({ children }: { children: string }) {
   return (
-    <div style={{
-      fontSize:      "9px",
-      letterSpacing: "0.12em",
-      color:         "var(--text-3)",
-      borderTop:     "1px solid var(--border)",
-      paddingTop:    10,
-      marginTop:     4,
-    }}>
+    <div
+      style={{
+        fontSize: "9px",
+        letterSpacing: "0.12em",
+        color: "var(--text-3)",
+        borderTop: "1px solid var(--border)",
+        paddingTop: 10,
+        marginTop: 4,
+      }}
+    >
       {children}
     </div>
   );
 }
 
 function Slider({
-  label, sub, value, min, max, step, onChange, disabled,
+  label,
+  sub,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  disabled,
+  accentColor = RESPONSE_COLOR,
 }: {
-  label:     string;
-  sub?:      string;
-  value:     number;
-  min:       number;
-  max:       number;
-  step:      number;
-  onChange:  (v: number) => void;
+  label: string;
+  sub?: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (v: number) => void;
   disabled?: boolean;
+  accentColor?: string;
 }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 3, opacity: disabled ? 0.4 : 1 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 3,
+        opacity: disabled ? 0.4 : 1,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+        }}
+      >
         <div>
-          <span style={{ fontSize: "10px", color: "var(--text-2)", letterSpacing: "0.04em" }}>
+          <span
+            style={{
+              fontSize: "10px",
+              color: "var(--text-2)",
+              letterSpacing: "0.04em",
+            }}
+          >
             {label}
           </span>
+
           {sub && (
-            <span style={{ fontSize: "9px", color: "var(--text-3)", marginLeft: 5 }}>
+            <span
+              style={{
+                fontSize: "9px",
+                color: "var(--text-3)",
+                marginLeft: 5,
+              }}
+            >
               {sub}
             </span>
           )}
         </div>
-        <span style={{
-          fontSize:   "13px",
-          color:      disabled ? "var(--text-3)" : "var(--accent)",
-          fontWeight: 500,
-          fontVariantNumeric: "tabular-nums",
-        }}>
+
+        <span
+          style={{
+            fontSize: "13px",
+            color: disabled ? "var(--text-3)" : accentColor,
+            fontWeight: 500,
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
           {value.toFixed(2)}
         </span>
       </div>
+
       <input
         type="range"
-        min={min} max={max} step={step} value={value}
+        min={min}
+        max={max}
+        step={step}
+        value={value}
         disabled={disabled}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         style={{
-          width:       "100%",
-          accentColor: "var(--accent)",
-          cursor:      disabled ? "not-allowed" : "pointer",
+          width: "100%",
+          accentColor,
+          cursor: disabled ? "not-allowed" : "pointer",
         }}
       />
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", color: "var(--text-3)" }}>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: "9px",
+          color: "var(--text-3)",
+        }}
+      >
         <span>{min}</span>
         <span>{max}</span>
       </div>
@@ -76,142 +146,221 @@ function Slider({
 }
 
 function Toggle({
-  label, checked, onChange,
+  label,
+  checked,
+  onChange,
+  accentColor = RESPONSE_COLOR,
 }: {
-  label:    string;
-  checked:  boolean;
+  label: string;
+  checked: boolean;
   onChange: (v: boolean) => void;
+  accentColor?: string;
 }) {
   return (
     <div
       onClick={() => onChange(!checked)}
       style={{
-        display:     "flex",
-        alignItems:  "center",
-        gap:         8,
-        cursor:      "pointer",
-        userSelect:  "none",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        cursor: "pointer",
+        userSelect: "none",
       }}
     >
-      <div style={{
-        width:        28,
-        height:       14,
-        borderRadius: 7,
-        background:   checked ? "var(--accent)" : "var(--border-2)",
-        position:     "relative",
-        transition:   "background 0.15s",
-        flexShrink:   0,
-      }}>
-        <div style={{
-          position:   "absolute",
-          top:        2,
-          left:       checked ? 16 : 2,
-          width:      10,
-          height:     10,
-          borderRadius: "50%",
-          background: "white",
-          transition: "left 0.15s",
-        }} />
+      <div
+        style={{
+          width: 28,
+          height: 14,
+          borderRadius: 7,
+          background: checked ? accentColor : "var(--border-2)",
+          position: "relative",
+          transition: "background 0.15s",
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: 2,
+            left: checked ? 16 : 2,
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            background: "white",
+            transition: "left 0.15s",
+          }}
+        />
       </div>
-      <span style={{ fontSize: "10px", color: checked ? "var(--text-2)" : "var(--text-3)" }}>
+
+      <span
+        style={{
+          fontSize: "10px",
+          color: checked ? "var(--text-2)" : "var(--text-3)",
+        }}
+      >
         {label}
       </span>
     </div>
   );
 }
 
-// Visual equation display
+// ─── Equation ───────────────────────────────────────────────────────────────
+
 function TaylorEquation({
-  alpha, beta, rStarOverride, piStarOverride, useRStar, usePiStar, showInertial, rho = 0.85,
+  alpha,
+  beta,
+  realRStarOverride,
+  piStarOverride,
+  useRStar,
+  usePiStar,
+  showInertial,
+  rho = 0.85,
 }: {
-  alpha:          number;
-  beta:           number;
-  rStarOverride?: number;
+  alpha: number;
+  beta: number;
+  realRStarOverride?: number;
   piStarOverride?: number;
-  useRStar:       boolean;
-  usePiStar:      boolean;
-  showInertial:   boolean;
-  rho?:           number;
+  useRStar: boolean;
+  usePiStar: boolean;
+  showInertial: boolean;
+  rho?: number;
 }) {
   const termStyle: React.CSSProperties = {
-    display:       "inline-flex",
+    display: "inline-flex",
     flexDirection: "column",
-    alignItems:    "center",
-    gap:           1,
+    alignItems: "center",
+    gap: 1,
   };
-  const valStyle = (highlight?: boolean): React.CSSProperties => ({
-    fontSize:    "13px",
-    fontWeight:  500,
-    color:       highlight ? "var(--accent)" : "var(--text-2)",
-    lineHeight:  1,
+
+  const valStyle = (
+    color?: string
+  ): React.CSSProperties => ({
+    fontSize: "13px",
+    fontWeight: 500,
+    color: color ?? "var(--text-2)",
+    lineHeight: 1,
     fontVariantNumeric: "tabular-nums",
   });
+
   const labelStyle: React.CSSProperties = {
     fontSize: "8px",
-    color:    "var(--text-3)",
+    color: "var(--text-3)",
     letterSpacing: "0.05em",
   };
+
   const opStyle: React.CSSProperties = {
-    fontSize:    "13px",
-    color:       "var(--text-3)",
-    padding:     "0 3px",
-    alignSelf:   "flex-start",
-    marginTop:   2,
+    fontSize: "13px",
+    color: "var(--text-3)",
+    padding: "0 3px",
+    alignSelf: "flex-start",
+    marginTop: 2,
   };
 
   return (
-    <div style={{
-      background:   "var(--bg-3)",
-      border:       "1px solid var(--border)",
-      borderRadius: "2px",
-      padding:      "10px 12px",
-      display:      "flex",
-      flexDirection: "column",
-      gap:          8,
-    }}>
+    <div
+      style={{
+        background: "var(--bg-3)",
+        border: "1px solid var(--border)",
+        borderRadius: "2px",
+        padding: "10px 12px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      }}
+    >
       {/* Taylor Rule */}
       <div>
-        <div style={{ fontSize: "8px", color: "var(--text-3)", letterSpacing: "0.1em", marginBottom: 6 }}>
+        <div
+          style={{
+            fontSize: "8px",
+            color: "var(--text-3)",
+            letterSpacing: "0.1em",
+            marginBottom: 6,
+          }}
+        >
           TAYLOR RULE
         </div>
-        <div style={{ display: "flex", alignItems: "flex-start", flexWrap: "wrap", gap: 2 }}>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
           <div style={termStyle}>
             <span style={valStyle()}>i</span>
             <span style={labelStyle}>OCR</span>
           </div>
+
           <span style={opStyle}>=</span>
+
           <div style={termStyle}>
-            <span style={valStyle(useRStar)}>
-              {useRStar && rStarOverride !== undefined ? rStarOverride.toFixed(2) : "r*"}
+            <span
+              style={valStyle(
+                useRStar ? OVERRIDE_COLOR : undefined
+              )}
+            >
+              {useRStar && realRStarOverride !== undefined
+                ? `${realRStarOverride.toFixed(2)} + π`
+                : "r*"}
             </span>
-            <span style={labelStyle}>{useRStar ? "override" : "MPS"}</span>
+
+            <span style={labelStyle}>
+              {useRStar ? "real override" : "MPS nominal"}
+            </span>
           </div>
+
           <span style={opStyle}>+</span>
+
           <div style={termStyle}>
-            <span style={valStyle(true)}>{alpha.toFixed(2)}</span>
+            <span style={valStyle(RESPONSE_COLOR)}>
+              {alpha.toFixed(2)}
+            </span>
             <span style={labelStyle}>α</span>
           </div>
+
           <span style={{ ...opStyle, fontSize: "10px" }}>·</span>
+
           <div style={termStyle}>
             <span style={valStyle()}>(π −</span>
             <span style={labelStyle}>inflation</span>
           </div>
+
           <div style={termStyle}>
-            <span style={valStyle(usePiStar)}>
-              {usePiStar && piStarOverride !== undefined ? piStarOverride.toFixed(2) : "π*"}
+            <span
+              style={valStyle(
+                usePiStar ? OVERRIDE_COLOR : undefined
+              )}
+            >
+              {usePiStar && piStarOverride !== undefined
+                ? piStarOverride.toFixed(2)
+                : "π*"}
             </span>
-            <span style={labelStyle}>{usePiStar ? "override" : "hist."}</span>
+
+            <span style={labelStyle}>
+              {usePiStar ? "override" : "hist."}
+            </span>
           </div>
+
           <div style={termStyle}>
             <span style={valStyle()}>)</span>
             <span style={labelStyle}>&nbsp;</span>
           </div>
+
           <span style={opStyle}>+</span>
+
           <div style={termStyle}>
-            <span style={valStyle(true)}>{beta.toFixed(2)}</span>
+            <span style={valStyle(RESPONSE_COLOR)}>
+              {beta.toFixed(2)}
+            </span>
+
             <span style={labelStyle}>β</span>
           </div>
+
           <span style={{ ...opStyle, fontSize: "10px" }}>·</span>
+
           <div style={termStyle}>
             <span style={valStyle()}>gap</span>
             <span style={labelStyle}>output</span>
@@ -219,33 +368,59 @@ function TaylorEquation({
         </div>
       </div>
 
-      {/* Inertial Taylor Rule */}
+      {/* Inertial */}
       {showInertial && (
         <div style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
-          <div style={{ fontSize: "8px", color: "var(--text-3)", letterSpacing: "0.1em", marginBottom: 6 }}>
+          <div
+            style={{
+              fontSize: "8px",
+              color: "var(--text-3)",
+              letterSpacing: "0.1em",
+              marginBottom: 6,
+            }}
+          >
             INERTIAL TAYLOR RULE
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", flexWrap: "wrap", gap: 2 }}>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+              gap: 2,
+            }}
+          >
             <div style={termStyle}>
               <span style={valStyle()}>i</span>
               <span style={labelStyle}>OCR</span>
             </div>
+
             <span style={opStyle}>=</span>
+
             <div style={termStyle}>
               <span style={valStyle()}>{rho.toFixed(2)}</span>
               <span style={labelStyle}>ρ</span>
             </div>
+
             <span style={{ ...opStyle, fontSize: "10px" }}>·</span>
+
             <div style={termStyle}>
               <span style={valStyle()}>i</span>
               <span style={labelStyle}>t−1</span>
             </div>
+
             <span style={opStyle}>+</span>
+
             <div style={termStyle}>
-              <span style={valStyle()}>{(1 - rho).toFixed(2)}</span>
+              <span style={valStyle()}>
+                {(1 - rho).toFixed(2)}
+              </span>
+
               <span style={labelStyle}>1−ρ</span>
             </div>
+
             <span style={{ ...opStyle, fontSize: "10px" }}>·</span>
+
             <div style={termStyle}>
               <span style={valStyle()}>i*</span>
               <span style={labelStyle}>Taylor</span>
@@ -257,201 +432,396 @@ function TaylorEquation({
   );
 }
 
-function StatRow({ label, value }: { label: string; value: string }) {
+function StatRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        fontSize: "10px",
+      }}
+    >
       <span style={{ color: "var(--text-3)" }}>{label}</span>
-      <span style={{ color: "var(--accent)", fontVariantNumeric: "tabular-nums" }}>{value}</span>
+
+      <span
+        style={{
+          color: RESPONSE_COLOR,
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {value}
+      </span>
     </div>
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main component ─────────────────────────────────────────────────────────
 
 export function ParameterPlayground() {
-  const params              = useAppStore((s) => s.params);
-  const setParams           = useAppStore((s) => s.setParams);
-  const useRStarOverride    = useAppStore((s) => s.useRStarOverride);
-  const usePiStarOverride   = useAppStore((s) => s.usePiStarOverride);
-  const setUseRStarOverride = useAppStore((s) => s.setUseRStarOverride);
-  const setUsePiStarOverride = useAppStore((s) => s.setUsePiStarOverride);
-  const showInertial        = useAppStore((s) => s.showInertial);
-  const setShowInertial     = useAppStore((s) => s.setShowInertial);
-  const fetchComputed       = useAppStore((s) => s.fetchComputed);
-  const isLoadingComputed   = useAppStore((s) => s.isLoadingComputed);
-  const olsResult           = useAppStore((s) => s.olsResult);
-  const olsContext          = useAppStore((s) => s.olsContext);
-  const ocrFitR2            = useAppStore((s) => s.ocrFitR2);
-  const inertialR2          = useAppStore((s) => s.inertialR2);
+  const params = useAppStore((s) => s.params);
+  const setParams = useAppStore((s) => s.setParams);
 
-  // Debounce slider → fetchComputed (no OLS)
-  useDebounce(
-    () => { fetchComputed(); },
-    150,
-    [params, useRStarOverride, usePiStarOverride],
+  const useRealRStarOverride = useAppStore(
+    (s) => s.useRealRStarOverride
   );
 
-  // Override toggles also immediately re-fetch
-  const handleRStarToggle = (v: boolean) => {
-    setUseRStarOverride(v);
-    // debounce will pick this up
-  };
-  const handlePiStarToggle = (v: boolean) => {
-    setUsePiStarOverride(v);
-  };
+  const usePiStarOverride = useAppStore(
+    (s) => s.usePiStarOverride
+  );
 
-  const isOlsSnapped =
+  const setUseRealRStarOverride = useAppStore(
+    (s) => s.setUseRealRStarOverride
+  );
+
+  const setUsePiStarOverride = useAppStore(
+    (s) => s.setUsePiStarOverride
+  );
+
+  const showInertial = useAppStore((s) => s.showInertial);
+  const setShowInertial = useAppStore((s) => s.setShowInertial);
+
+  const fetchComputed = useAppStore((s) => s.fetchComputed);
+
+  const isLoadingComputed = useAppStore(
+    (s) => s.isLoadingComputed
+  );
+
+  const olsResult = useAppStore((s) => s.olsResult);
+  const olsContext = useAppStore((s) => s.olsContext);
+
+  const ocrFitR2 = useAppStore((s) => s.ocrFitR2);
+  const inertialR2 = useAppStore((s) => s.inertialR2);
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Debounce computed updates
+  // ───────────────────────────────────────────────────────────────────────────
+
+  useDebounce(
+    () => {
+      fetchComputed();
+    },
+    150,
+    [params, useRealRStarOverride, usePiStarOverride]
+  );
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // OLS state logic
+  // ───────────────────────────────────────────────────────────────────────────
+
+  const slidersMatchLastOLS =
     olsResult &&
     Math.abs(params.alpha - olsResult.alpha) < 0.001 &&
-    Math.abs(params.beta  - olsResult.beta)  < 0.001;
+    Math.abs(params.beta - olsResult.beta) < 0.001;
+
+  const isOlsContextStale =
+    !!olsContext &&
+    (
+      olsContext.useRealRStarOverride !==
+        useRealRStarOverride ||
+
+      olsContext.usePiStarOverride !==
+        usePiStarOverride ||
+
+      (useRealRStarOverride &&
+        olsContext.realRStarOverride !==
+          params.realRStarOverride) ||
+
+      (usePiStarOverride &&
+        olsContext.piStarOverride !==
+          params.piStarOverride)
+    );
+
+  const isOlsCurrent =
+    slidersMatchLastOLS && !isOlsContextStale;
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Button state
+  // ───────────────────────────────────────────────────────────────────────────
+
+  let olsButtonLabel =
+    "ESTIMATE α & β FROM DATA (OLS)";
+
+  let olsButtonStyles: React.CSSProperties = {
+    background: RESPONSE_BG,
+    color: RESPONSE_COLOR,
+    border: `1px solid ${RESPONSE_COLOR}`,
+  };
+
+  if (isLoadingComputed) {
+    olsButtonLabel = "RE-ESTIMATING FROM DATA...";
+  } else if (isOlsCurrent) {
+    olsButtonLabel =
+      "✓ MATCHES CURRENT OLS ESTIMATES";
+
+    olsButtonStyles = {
+      background: SUCCESS_BG,
+      color: SUCCESS_COLOR,
+      border: `1px solid ${SUCCESS_BORDER}`,
+    };
+  } else if (isOlsContextStale) {
+    olsButtonLabel =
+      "OLS ESTIMATES OUTDATED — RE-RUN";
+
+    olsButtonStyles = {
+      background: WARNING_BG,
+      color: WARNING_COLOR,
+      border: `1px solid ${WARNING_BORDER}`,
+    };
+  }
 
   return (
-    <div style={{
-      background:    "var(--bg-2)",
-      border:        "1px solid var(--border)",
-      padding:       "16px 18px",
-      display:       "flex",
-      flexDirection: "column",
-      gap:           10,
-      height:        "100%",
-      overflowY:     "auto",
-    }}>
-
-      {/* ── Title ── */}
-      <div style={{ fontSize: "10px", letterSpacing: "0.1em", color: "var(--text-3)" }}>
+    <div
+      style={{
+        background: "var(--bg-2)",
+        border: "1px solid var(--border)",
+        padding: "16px 18px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        height: "100%",
+        overflowY: "auto",
+      }}
+    >
+      {/* Title */}
+      <div
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.1em",
+          color: "var(--text-3)",
+        }}
+      >
         PARAMETER PLAYGROUND
       </div>
 
-      {/* ── Live equation ── */}
+      {/* Equation */}
       <TaylorEquation
         alpha={params.alpha}
         beta={params.beta}
-        rStarOverride={params.rStarOverride}
+        realRStarOverride={params.realRStarOverride}
         piStarOverride={params.piStarOverride}
-        useRStar={useRStarOverride}
+        useRStar={useRealRStarOverride}
         usePiStar={usePiStarOverride}
         showInertial={showInertial}
       />
 
-      {/* ── Section 1: Response Coefficients ── */}
+      {/* Response coefficients */}
       <SectionLabel>RESPONSE COEFFICIENTS</SectionLabel>
-      <div style={{
-        background:   "var(--bg-3)",
-        border:       "1px solid var(--border)",
-        borderRadius: "2px",
-        padding:      "10px 12px",
-        display:      "flex",
-        flexDirection: "column",
-        gap:          10,
-      }}>
+
+      <div
+        style={{
+          background: "var(--bg-3)",
+          border: "1px solid var(--border)",
+          borderRadius: "2px",
+          padding: "10px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
         <Slider
           label="α"
           sub="inflation gap weight"
           value={params.alpha}
-          min={0} max={2} step={0.05}
+          min={0}
+          max={2}
+          step={0.05}
           onChange={(v) => setParams({ alpha: v })}
+          accentColor={RESPONSE_COLOR}
         />
+
         <Slider
           label="β"
           sub="output gap weight"
           value={params.beta}
-          min={0} max={2} step={0.05}
+          min={0}
+          max={2}
+          step={0.05}
           onChange={(v) => setParams({ beta: v })}
+          accentColor={RESPONSE_COLOR}
         />
 
-        {/* OLS estimation — lives here, adjacent to the coefficients it estimates */}
-        <div style={{
-          borderTop:  "1px solid var(--border)",
-          paddingTop: 10,
-          display:    "flex",
-          flexDirection: "column",
-          gap:        8,
-        }}>
-          <div style={{ fontSize: "9px", color: "var(--text-3)", letterSpacing: "0.08em" }}>
-            OR — ESTIMATE α AND β FROM DATA
+        {/* OLS */}
+        <div
+          style={{
+            borderTop: "1px solid var(--border)",
+            paddingTop: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "9px",
+                color: "var(--text-3)",
+                letterSpacing: "0.08em",
+              }}
+            >
+              OR — ESTIMATE α AND β FROM DATA
+            </div>
+
+            {isOlsContextStale && (
+              <div
+                style={{
+                  fontSize: "8px",
+                  color: WARNING_COLOR,
+                  border: `1px solid ${WARNING_BORDER}`,
+                  background: WARNING_BG,
+                  padding: "2px 5px",
+                  borderRadius: "999px",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                STALE
+              </div>
+            )}
           </div>
-          <p style={{ fontSize: "9px", color: "var(--text-3)", lineHeight: 1.5, margin: 0 }}>
-            Runs OLS of (OCR − r*) on inflation gap and output gap over the
-            selected window. Uses {useRStarOverride ? "slider r*" : "MPS r* series"} and{" "}
-            {usePiStarOverride ? "slider π*" : "historical π* targets"}.
+
+          <p
+            style={{
+              fontSize: "9px",
+              color: "var(--text-3)",
+              lineHeight: 1.5,
+              margin: 0,
+            }}
+          >
+            Runs OLS of (OCR − r*) on inflation gap and
+            output gap over the selected window.
           </p>
+
+          {isOlsContextStale && (
+            <div
+              style={{
+                fontSize: "9px",
+                color: WARNING_COLOR,
+                lineHeight: 1.5,
+              }}
+            >
+              Parameters or assumptions changed since
+              the last OLS estimation. Re-run regression
+              to estimate coefficients for the current
+              setup.
+            </div>
+          )}
+
           <button
             onClick={() => fetchComputed({ runOLS: true })}
             disabled={isLoadingComputed}
             style={{
-              padding:       "7px 0",
-              background:    isOlsSnapped ? "transparent" : "var(--accent-dim)",
-              color:         "var(--accent)",
-              border:        `1px solid ${isOlsSnapped ? "var(--border-2)" : "var(--accent)"}`,
-              borderRadius:  "2px",
-              fontFamily:    "inherit",
-              fontSize:      "10px",
+              padding: "7px 0",
+              borderRadius: "2px",
+              fontFamily: "inherit",
+              fontSize: "10px",
               letterSpacing: "0.06em",
-              cursor:        isLoadingComputed ? "not-allowed" : "pointer",
-              opacity:       isLoadingComputed ? 0.5 : 1,
-              transition:    "all 0.15s",
+              cursor: isLoadingComputed
+                ? "not-allowed"
+                : "pointer",
+              opacity: isLoadingComputed ? 0.6 : 1,
+              transition: "all 0.15s",
+              ...olsButtonStyles,
             }}
           >
-            {isLoadingComputed
-              ? "WAITING FOR CHART DATA..."
-              : isOlsSnapped
-              ? "✓ SLIDERS MATCH OLS ESTIMATES"
-              : "ESTIMATE α & β FROM DATA (OLS)"}
+            {olsButtonLabel}
           </button>
 
-          {/* OLS results — immediately below the button that produced them */}
+          {/* OLS results */}
           {olsResult && (
-            <div style={{
-              background:    "var(--bg-2)",
-              border:        "1px solid var(--border)",
-              borderRadius:  "2px",
-              padding:       "10px 12px",
-              display:       "flex",
-              flexDirection: "column",
-              gap:           6,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "9px", color: "var(--text-3)", letterSpacing: "0.08em" }}>
+            <div
+              style={{
+                background: "var(--bg-2)",
+                border: "1px solid var(--border)",
+                borderRadius: "2px",
+                padding: "10px 12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "9px",
+                    color: "var(--text-3)",
+                    letterSpacing: "0.08em",
+                  }}
+                >
                   OLS ESTIMATES
                 </span>
-                <span style={{ fontSize: "9px", color: "var(--text-3)" }}>
-                  {olsContext?.useRStarOverride ? "r* slider" : "r* MPS"}{" · "}
-                  {olsContext?.usePiStarOverride ? "π* slider" : "π* hist."}
+
+                <span
+                  style={{
+                    fontSize: "9px",
+                    color: isOlsContextStale
+                      ? WARNING_COLOR
+                      : "var(--text-3)",
+                  }}
+                >
+                  {isOlsContextStale
+                    ? "STALE"
+                    : "CURRENT"}
                 </span>
               </div>
-              <StatRow label="α (estimated)" value={olsResult.alpha.toFixed(3)} />
-              <StatRow label="β (estimated)" value={olsResult.beta.toFixed(3)} />
-              <StatRow label="R² (uncentered)" value={olsResult.rSquared.toFixed(3)} />
-              <StatRow label="RMSE" value={olsResult.rmse.toFixed(3) + "pp"} />
-              <div style={{
-                fontSize:   "9px",
-                color:      "var(--text-3)",
-                lineHeight: 1.5,
-                borderTop:  "1px solid var(--border)",
-                paddingTop: 6,
-                marginTop:  2,
-              }}>
-                {olsResult.alpha > 0.5 ? "More" : "Less"} inflation-reactive than
-                standard (α={olsResult.alpha.toFixed(2)}),{" "}
-                {olsResult.beta > 0.5 ? "more" : "less"} output-reactive
-                (β={olsResult.beta.toFixed(2)}).
-              </div>
-              {!isOlsSnapped && (
+
+              <StatRow
+                label="α (estimated)"
+                value={olsResult.alpha.toFixed(3)}
+              />
+
+              <StatRow
+                label="β (estimated)"
+                value={olsResult.beta.toFixed(3)}
+              />
+
+              <StatRow
+                label="R² (uncentered)"
+                value={olsResult.rSquared.toFixed(3)}
+              />
+
+              <StatRow
+                label="RMSE"
+                value={olsResult.rmse.toFixed(3) + "pp"}
+              />
+
+              {!slidersMatchLastOLS && (
                 <button
                   onClick={() => {
-                    setParams({ alpha: olsResult.alpha, beta: olsResult.beta });
+                    setParams({
+                      alpha: olsResult.alpha,
+                      beta: olsResult.beta,
+                    });
+
                     fetchComputed();
                   }}
                   style={{
-                    padding:       "5px 0",
-                    background:    "transparent",
-                    color:         "var(--accent)",
-                    border:        "1px solid var(--accent)",
-                    borderRadius:  "2px",
-                    fontFamily:    "inherit",
-                    fontSize:      "9px",
+                    marginTop: 6,
+                    padding: "5px 0",
+                    background: "transparent",
+                    color: RESPONSE_COLOR,
+                    border: `1px solid ${RESPONSE_COLOR}`,
+                    borderRadius: "2px",
+                    fontFamily: "inherit",
+                    fontSize: "9px",
                     letterSpacing: "0.06em",
-                    cursor:        "pointer",
+                    cursor: "pointer",
                   }}
                 >
                   ↑ APPLY TO SLIDERS
@@ -462,99 +832,135 @@ export function ParameterPlayground() {
         </div>
       </div>
 
-      {/* ── Section 2: Neutral Rate ── */}
+      {/* Neutral rate */}
       <SectionLabel>NEUTRAL RATE r*</SectionLabel>
-      <div style={{
-        background:   "var(--bg-3)",
-        border:       "1px solid var(--border)",
-        borderRadius: "2px",
-        padding:      "10px 12px",
-        display:      "flex",
-        flexDirection: "column",
-        gap:          10,
-      }}>
-        <div style={{ fontSize: "9px", color: "var(--text-3)", lineHeight: 1.5 }}>
-          Default uses RBNZ's published r* from each MPS — time-varying.
-          Override to test a counterfactual flat neutral rate.
-        </div>
+
+      <div
+        style={{
+          background: "var(--bg-3)",
+          border: "1px solid var(--border)",
+          borderRadius: "2px",
+          padding: "10px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
         <Toggle
           label="Override with flat r*"
-          checked={useRStarOverride}
-          onChange={handleRStarToggle}
+          checked={useRealRStarOverride}
+          onChange={setUseRealRStarOverride}
+          accentColor={OVERRIDE_COLOR}
         />
+
         <Slider
-          label="r* constant override"
-          value={params.rStarOverride ?? 3.0}
-          min={0} max={8} step={0.25}
-          onChange={(v) => setParams({ rStarOverride: v })}
-          disabled={!useRStarOverride}
+          label="real r* override"
+          sub="real neutral rate"
+          value={params.realRStarOverride ?? 2.0}
+          min={-1}
+          max={4}
+          step={0.25}
+          onChange={(v) =>
+            setParams({ realRStarOverride: v })
+          }
+          disabled={!useRealRStarOverride}
+          accentColor={OVERRIDE_COLOR}
         />
       </div>
 
-      {/* ── Section 3: Inflation Target ── */}
+      {/* Inflation target */}
       <SectionLabel>INFLATION TARGET π*</SectionLabel>
-      <div style={{
-        background:   "var(--bg-3)",
-        border:       "1px solid var(--border)",
-        borderRadius: "2px",
-        padding:      "10px 12px",
-        display:      "flex",
-        flexDirection: "column",
-        gap:          10,
-      }}>
-        <div style={{ fontSize: "9px", color: "var(--text-3)", lineHeight: 1.5 }}>
-          Default uses historical targets: 1.0% (pre-1997), 1.5% (1997–2002),
-          2.0% (2002–present). Override to test a uniform target counterfactual.
-        </div>
+
+      <div
+        style={{
+          background: "var(--bg-3)",
+          border: "1px solid var(--border)",
+          borderRadius: "2px",
+          padding: "10px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
         <Toggle
           label="Override with flat π*"
           checked={usePiStarOverride}
-          onChange={handlePiStarToggle}
+          onChange={setUsePiStarOverride}
+          accentColor={OVERRIDE_COLOR}
         />
+
         <Slider
           label="π* constant override"
           value={params.piStarOverride ?? 2.0}
-          min={0} max={4} step={0.25}
-          onChange={(v) => setParams({ piStarOverride: v })}
+          min={0}
+          max={4}
+          step={0.25}
+          onChange={(v) =>
+            setParams({ piStarOverride: v })
+          }
           disabled={!usePiStarOverride}
+          accentColor={OVERRIDE_COLOR}
         />
       </div>
 
-      {/* ── Section 4: Display + Model Fit ── */}
+      {/* Display + fit */}
       <SectionLabel>DISPLAY & MODEL FIT</SectionLabel>
-      <div style={{
-        background:   "var(--bg-3)",
-        border:       "1px solid var(--border)",
-        borderRadius: "2px",
-        padding:      "10px 12px",
-        display:      "flex",
-        flexDirection: "column",
-        gap:          10,
-      }}>
+
+      <div
+        style={{
+          background: "var(--bg-3)",
+          border: "1px solid var(--border)",
+          borderRadius: "2px",
+          padding: "10px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
         <Toggle
           label="Show Inertial Taylor Rule"
           checked={showInertial}
           onChange={setShowInertial}
         />
 
-        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ fontSize: "9px", color: "var(--text-3)", letterSpacing: "0.08em", marginBottom: 2 }}>
+        <div
+          style={{
+            borderTop: "1px solid var(--border)",
+            paddingTop: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+          }}
+        >
+          <div
+            style={{
+              fontSize: "9px",
+              color: "var(--text-3)",
+              letterSpacing: "0.08em",
+            }}
+          >
             FIT vs ACTUAL OCR — R² (centred)
           </div>
+
           <StatRow
             label="Taylor Rule"
-            value={ocrFitR2 !== null ? ocrFitR2.toFixed(3) : "—"}
+            value={
+              ocrFitR2 !== null
+                ? ocrFitR2.toFixed(3)
+                : "—"
+            }
           />
+
           <StatRow
             label="Inertial Taylor"
-            value={inertialR2 !== null ? inertialR2.toFixed(3) : "—"}
+            value={
+              inertialR2 !== null
+                ? inertialR2.toFixed(3)
+                : "—"
+            }
           />
-          <div style={{ fontSize: "9px", color: "var(--text-3)", lineHeight: 1.5, marginTop: 2 }}>
-            R² = 1 − SS_res / SS_tot. Updates live with slider changes.
-          </div>
         </div>
       </div>
-
     </div>
   );
 }

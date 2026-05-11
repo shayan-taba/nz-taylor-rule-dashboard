@@ -11,7 +11,7 @@ const math = create(all);
 export interface TaylorParams {
   alpha:          number;  // inflation gap coefficient (default 0.5)
   beta:           number;  // output gap coefficient   (default 0.5)
-  rStarOverride?: number;  // overrides per-row r* when set (what-if slider)
+  realRStarOverride?: number;  // overrides per-row r* when set (what-if slider)
   piStarOverride?: number; // overrides per-row π* when set (what-if slider)
 }
 
@@ -54,7 +54,11 @@ export function computeTaylorRate(
   params:     TaylorParams,
   actualOcr?: number,  // for deviation calculation
 ): TaylorResult {
-  const r  = params.rStarOverride  ?? rStar;
+  const r =
+  params.realRStarOverride !== undefined
+    ? params.realRStarOverride + inflation // If real neutral override give,
+    // we must add inflation rate (or long run inflation expectations).
+    : rStar; // rStar is already neutral per the MPS
   const pi = params.piStarOverride ?? piStar;
   const { alpha, beta } = params;
 

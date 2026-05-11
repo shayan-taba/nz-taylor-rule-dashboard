@@ -12,9 +12,9 @@ const START_DATE = "2000-03-31";
 // Captures which overrides were active when OLS was run —
 // shown in the interpretation text in ParameterPlayground
 export interface OlsContext {
-  useRStarOverride:  boolean;
+  useRealRStarOverride:  boolean;
   usePiStarOverride: boolean;
-  rStarOverride?:    number;
+  realRStarOverride?:    number;
   piStarOverride?:   number;
 }
 
@@ -29,7 +29,7 @@ interface AppStore {
   dateRange:         { start: string; end: string };
   inflationMeasure:  InflationMeasure;
   params:            TaylorParams;
-  useRStarOverride:  boolean;
+  useRealRStarOverride:  boolean;
   usePiStarOverride: boolean;
   showInertial:      boolean;
 
@@ -51,7 +51,7 @@ interface AppStore {
   setDateRange:          (range: { start: string; end: string }) => void;
   setParams:             (p: Partial<TaylorParams>) => void;
   setInflationMeasure:   (m: InflationMeasure) => void;
-  setUseRStarOverride:   (v: boolean) => void;
+  setUseRealRStarOverride:   (v: boolean) => void;
   setUsePiStarOverride:  (v: boolean) => void;
   setShowInertial:       (v: boolean) => void;
   fetchRaw:              () => Promise<void>;
@@ -70,7 +70,7 @@ export const useAppStore = create<AppStore>((set, get) => {
     dateRange:         { start: START_DATE, end: today },
     inflationMeasure:  "cpiApc",
     params:            DEFAULT_PARAMS,
-    useRStarOverride:  false,
+    useRealRStarOverride:  false,
     usePiStarOverride: false,
     showInertial:      true,
     olsResult:         null,
@@ -122,7 +122,7 @@ export const useAppStore = create<AppStore>((set, get) => {
       get().fetchComputed();
     },
 
-    setUseRStarOverride:  (v) => set({ useRStarOverride: v }),
+    setUseRealRStarOverride:  (v) => set({ useRealRStarOverride: v }),
     setUsePiStarOverride: (v) => set({ usePiStarOverride: v }),
     setShowInertial:      (v) => set({ showInertial: v }),
 
@@ -146,16 +146,16 @@ export const useAppStore = create<AppStore>((set, get) => {
     fetchComputed: async (opts = {}) => {
       const {
         dateRange, inflationMeasure, params,
-        useRStarOverride, usePiStarOverride,
+        useRealRStarOverride, usePiStarOverride,
       } = get();
 
       set({ isLoadingComputed: true });
 
       // Snapshot the override context at the moment OLS is triggered
       const currentContext: OlsContext = {
-        useRStarOverride,
+        useRealRStarOverride,
         usePiStarOverride,
-        rStarOverride:  useRStarOverride  ? params.rStarOverride  : undefined,
+        realRStarOverride:  useRealRStarOverride  ? params.realRStarOverride  : undefined,
         piStarOverride: usePiStarOverride ? params.piStarOverride : undefined,
       };
 
@@ -163,7 +163,7 @@ export const useAppStore = create<AppStore>((set, get) => {
         const body = {
           alpha:          params.alpha,
           beta:           params.beta,
-          rStarOverride:  useRStarOverride  ? params.rStarOverride  : undefined,
+          realRStarOverride:  useRealRStarOverride  ? params.realRStarOverride  : undefined,
           piStarOverride: usePiStarOverride ? params.piStarOverride : undefined,
           inflationMeasure,
           startDate:      dateRange.start,
