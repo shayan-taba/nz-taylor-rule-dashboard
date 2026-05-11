@@ -27,7 +27,7 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "prisma generate && next build",
     "build": "next build",
     "start": "next start",
     "pipeline": "tsx src/jobs/runPipeline.ts",
