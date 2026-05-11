@@ -27,8 +27,8 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "dev": "prisma generate && next build",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "prisma generate && next build",
     "start": "next start",
     "pipeline": "tsx src/jobs/runPipeline.ts",
     "seed": "npx prisma db seed"
