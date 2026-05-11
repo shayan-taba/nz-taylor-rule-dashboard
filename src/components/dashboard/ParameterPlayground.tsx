@@ -1,9 +1,18 @@
 // src/components/dashboard/ParameterPlayground.tsx
 
 "use client";
+
 import React from "react";
+
 import { useAppStore } from "../../store/appStore";
+
 import { useDebounce } from "../../hooks/useDebounce";
+
+import {
+  buildEstimationSpecification,
+  serializeEstimationSpecification,
+  slidersMatchOLS,
+} from "../../store/modelSpecification";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Semantic colours
@@ -462,109 +471,180 @@ function StatRow({
 }
 
 // ─── Main component ─────────────────────────────────────────────────────────
-
 export function ParameterPlayground() {
-  const params = useAppStore((s) => s.params);
-  const setParams = useAppStore((s) => s.setParams);
+  const params =
+    useAppStore((s) => s.params);
 
-  const useRealRStarOverride = useAppStore(
-    (s) => s.useRealRStarOverride
-  );
+  const setParams =
+    useAppStore((s) => s.setParams);
 
-  const usePiStarOverride = useAppStore(
-    (s) => s.usePiStarOverride
-  );
+  const inflationMeasure =
+    useAppStore(
+      (s) => s.inflationMeasure
+    );
 
-  const setUseRealRStarOverride = useAppStore(
-    (s) => s.setUseRealRStarOverride
-  );
+  const dateRange =
+    useAppStore(
+      (s) => s.dateRange
+    );
 
-  const setUsePiStarOverride = useAppStore(
-    (s) => s.setUsePiStarOverride
-  );
+  const useRealRStarOverride =
+    useAppStore(
+      (s) =>
+        s.useRealRStarOverride
+    );
 
-  const showInertial = useAppStore((s) => s.showInertial);
-  const setShowInertial = useAppStore((s) => s.setShowInertial);
+  const usePiStarOverride =
+    useAppStore(
+      (s) =>
+        s.usePiStarOverride
+    );
 
-  const fetchComputed = useAppStore((s) => s.fetchComputed);
+  const setUseRealRStarOverride =
+    useAppStore(
+      (s) =>
+        s.setUseRealRStarOverride
+    );
 
-  const isLoadingComputed = useAppStore(
-    (s) => s.isLoadingComputed
-  );
+  const setUsePiStarOverride =
+    useAppStore(
+      (s) =>
+        s.setUsePiStarOverride
+    );
 
-  const olsResult = useAppStore((s) => s.olsResult);
-  const olsContext = useAppStore((s) => s.olsContext);
+  const showInertial =
+    useAppStore(
+      (s) => s.showInertial
+    );
 
-  const ocrFitR2 = useAppStore((s) => s.ocrFitR2);
-  const inertialR2 = useAppStore((s) => s.inertialR2);
+  const setShowInertial =
+    useAppStore(
+      (s) =>
+        s.setShowInertial
+    );
 
-  // ───────────────────────────────────────────────────────────────────────────
+  const fetchComputed =
+    useAppStore(
+      (s) => s.fetchComputed
+    );
+
+  const isLoadingComputed =
+    useAppStore(
+      (s) =>
+        s.isLoadingComputed
+    );
+
+  const olsResult =
+    useAppStore(
+      (s) => s.olsResult
+    );
+
+  const olsSpecHash =
+    useAppStore(
+      (s) => s.olsSpecHash
+    );
+
+  const ocrFitR2 =
+    useAppStore(
+      (s) => s.ocrFitR2
+    );
+
+  const inertialR2 =
+    useAppStore(
+      (s) => s.inertialR2
+    );
+
+  // ───────────────────────────────────────────
   // Debounce computed updates
-  // ───────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────
 
   useDebounce(
     () => {
       fetchComputed();
     },
+
     150,
-    [params, useRealRStarOverride, usePiStarOverride]
+
+    [
+      params,
+      inflationMeasure,
+      dateRange,
+
+      useRealRStarOverride,
+      usePiStarOverride,
+    ]
   );
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // OLS state logic
-  // ───────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────
+  // Canonical spec comparison
+  // ───────────────────────────────────────────
 
-  const slidersMatchLastOLS =
-    olsResult &&
-    Math.abs(params.alpha - olsResult.alpha) < 0.001 &&
-    Math.abs(params.beta - olsResult.beta) < 0.001;
+  const currentSpec =
+    buildEstimationSpecification({
+      inflationMeasure,
+      dateRange,
 
+      useRealRStarOverride,
+      usePiStarOverride,
+
+      params,
+    });
+
+  const currentSpecHash =
+    serializeEstimationSpecification(
+      currentSpec
+    );
+
+  /**
+   * "stale" means:
+   * estimation assumptions changed
+   */
   const isOlsContextStale =
-    !!olsContext &&
-    (
-      olsContext.useRealRStarOverride !==
-        useRealRStarOverride ||
+    !!olsSpecHash &&
+    olsSpecHash !== currentSpecHash;
 
-      olsContext.usePiStarOverride !==
-        usePiStarOverride ||
-
-      (useRealRStarOverride &&
-        olsContext.realRStarOverride !==
-          params.realRStarOverride) ||
-
-      (usePiStarOverride &&
-        olsContext.piStarOverride !==
-          params.piStarOverride)
+  /**
+   * "matches" means:
+   * sliders equal estimated coefficients
+   */
+  const slidersMatchLastOLS =
+    slidersMatchOLS(
+      params,
+      olsResult
     );
 
   const isOlsCurrent =
-    slidersMatchLastOLS && !isOlsContextStale;
+    slidersMatchLastOLS &&
+    !isOlsContextStale;
 
-  // ───────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────
   // Button state
-  // ───────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────
 
   let olsButtonLabel =
     "ESTIMATE α & β FROM DATA (OLS)";
 
-  let olsButtonStyles: React.CSSProperties = {
-    background: RESPONSE_BG,
-    color: RESPONSE_COLOR,
-    border: `1px solid ${RESPONSE_COLOR}`,
+  let olsButtonStyles:
+    React.CSSProperties = {
+    background:
+      "var(--accent-dim)",
+
+    color:
+      "var(--accent)",
+
+    border:
+      "1px solid var(--accent)",
   };
 
   if (isLoadingComputed) {
-    olsButtonLabel = "RE-ESTIMATING FROM DATA...";
+    olsButtonLabel =
+      "RE-ESTIMATING FROM DATA...";
   } else if (isOlsCurrent) {
     olsButtonLabel =
       "✓ MATCHES CURRENT OLS ESTIMATES";
-
-    olsButtonStyles = {
-      background: SUCCESS_BG,
-      color: SUCCESS_COLOR,
-      border: `1px solid ${SUCCESS_BORDER}`,
-    };
-  } else if (isOlsContextStale) {
+  } else if (
+    isOlsContextStale
+  ) {
     olsButtonLabel =
       "OLS ESTIMATES OUTDATED — RE-RUN";
 
