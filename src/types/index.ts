@@ -52,6 +52,14 @@ export interface TaylorParams {
   piStarOverride?: number;
 }
 
+export interface OlsContext {
+  inflationMeasure: InflationMeasure;
+  useRStarOverride: boolean;
+  usePiStarOverride: boolean;
+  rStarOverride?: number;
+  piStarOverride?: number;
+}
+
 export interface OlsResult {
   alpha:     number;
   beta:      number;
@@ -74,6 +82,8 @@ export interface ComputeResponse {
   series:      ComputedRow[];
   ols:         OlsResult | null;
   descriptive: DescriptiveStats | null;
+  ocrFitR2:    number | null;
+  inertialR2:  number | null;
 }
 
 export type ExportFormat = "csv" | "json";

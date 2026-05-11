@@ -1,3 +1,5 @@
+// src/store/appStore.ts
+
 import { create }        from "zustand";
 import type {
   QuarterlyData, ComputedRow, RegimeDefinition,
@@ -7,6 +9,15 @@ import type {
 const DEFAULT_PARAMS: TaylorParams = { alpha: 0.5, beta: 0.5 };
 const START_DATE = "2000-03-31";
 
+// Captures which overrides were active when OLS was run —
+// shown in the interpretation text in ParameterPlayground
+export interface OlsContext {
+  useRStarOverride:  boolean;
+  usePiStarOverride: boolean;
+  rStarOverride?:    number;
+  piStarOverride?:   number;
+}
+
 interface AppStore {
   // Data
   rawSeries:        QuarterlyData[];
@@ -14,17 +25,22 @@ interface AppStore {
   regimes:          RegimeDefinition[];
 
   // UI
-  activeRegime:     string | null;
-  dateRange:        { start: string; end: string };
-  inflationMeasure: InflationMeasure;
-  params:           TaylorParams;
-  useRStarOverride: boolean;
+  activeRegime:      string | null;
+  dateRange:         { start: string; end: string };
+  inflationMeasure:  InflationMeasure;
+  params:            TaylorParams;
+  useRStarOverride:  boolean;
   usePiStarOverride: boolean;
-  showInertial:     boolean;
+  showInertial:      boolean;
 
   // Results
-  olsResult:        OlsResult | null;
-  descriptiveStats: DescriptiveStats | null;
+  olsResult:         OlsResult | null;
+  olsContext:        OlsContext | null;
+  descriptiveStats:  DescriptiveStats | null;
+
+  // Always-on model fit stats (updated on every fetchComputed)
+  ocrFitR2:          number | null;
+  inertialR2:        number | null;
 
   // Loading
   isLoadingRaw:      boolean;
@@ -58,7 +74,10 @@ export const useAppStore = create<AppStore>((set, get) => {
     usePiStarOverride: false,
     showInertial:      true,
     olsResult:         null,
+    olsContext:        null,
     descriptiveStats:  null,
+    ocrFitR2:          null,
+    inertialR2:        null,
     isLoadingRaw:      false,
     isLoadingComputed: false,
 
@@ -66,7 +85,12 @@ export const useAppStore = create<AppStore>((set, get) => {
       const { regimes } = get();
       const today = new Date().toISOString().split("T")[0];
       if (id === null) {
-        set({ activeRegime: null, dateRange: { start: START_DATE, end: today }, olsResult: null });
+        set({
+          activeRegime: null,
+          dateRange:    { start: START_DATE, end: today },
+          olsResult:    null,
+          olsContext:   null,
+        });
       } else {
         const regime = regimes.find((r) => r.id === id);
         if (regime) {
@@ -76,7 +100,8 @@ export const useAppStore = create<AppStore>((set, get) => {
               start: regime.startDate.split("T")[0],
               end:   regime.endDate ? regime.endDate.split("T")[0] : today,
             },
-            olsResult: null,
+            olsResult:  null,
+            olsContext: null,
           });
         }
       }
@@ -84,7 +109,7 @@ export const useAppStore = create<AppStore>((set, get) => {
     },
 
     setDateRange: (range) => {
-      set({ dateRange: range, activeRegime: null, olsResult: null });
+      set({ dateRange: range, activeRegime: null, olsResult: null, olsContext: null });
       get().fetchComputed();
     },
 
@@ -119,29 +144,53 @@ export const useAppStore = create<AppStore>((set, get) => {
     },
 
     fetchComputed: async (opts = {}) => {
-      const { dateRange, inflationMeasure, params, useRStarOverride, usePiStarOverride } = get();
+      const {
+        dateRange, inflationMeasure, params,
+        useRStarOverride, usePiStarOverride,
+      } = get();
+
       set({ isLoadingComputed: true });
+
+      // Snapshot the override context at the moment OLS is triggered
+      const currentContext: OlsContext = {
+        useRStarOverride,
+        usePiStarOverride,
+        rStarOverride:  useRStarOverride  ? params.rStarOverride  : undefined,
+        piStarOverride: usePiStarOverride ? params.piStarOverride : undefined,
+      };
+
       try {
         const body = {
-          alpha:           params.alpha,
-          beta:            params.beta,
-          rStarOverride:   useRStarOverride  ? params.rStarOverride  : undefined,
-          piStarOverride:  usePiStarOverride ? params.piStarOverride : undefined,
+          alpha:          params.alpha,
+          beta:           params.beta,
+          rStarOverride:  useRStarOverride  ? params.rStarOverride  : undefined,
+          piStarOverride: usePiStarOverride ? params.piStarOverride : undefined,
           inflationMeasure,
-          startDate:       dateRange.start,
-          endDate:         dateRange.end,
-          runOLS:          opts.runOLS ?? false,
+          startDate:      dateRange.start,
+          endDate:        dateRange.end,
+          runOLS:         opts.runOLS ?? false,
         };
+
         const res  = await fetch("/api/compute", {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
           body:    JSON.stringify(body),
         });
+
         const data = await res.json();
+
         set({
           computedSeries: data.series,
-          olsResult:      data.ols      ?? get().olsResult,
-          descriptiveStats: data.descriptive ?? get().descriptiveStats,
+          // Always update fit stats
+          ocrFitR2:       data.ocrFitR2   ?? null,
+          inertialR2:     data.inertialR2 ?? null,
+          // Only update OLS result + context if OLS was actually run
+          ...(data.ols !== null && data.ols !== undefined
+            ? { olsResult: data.ols, olsContext: currentContext }
+            : {}),
+          ...(data.descriptive !== null && data.descriptive !== undefined
+            ? { descriptiveStats: data.descriptive }
+            : {}),
         });
       } finally {
         set({ isLoadingComputed: false });

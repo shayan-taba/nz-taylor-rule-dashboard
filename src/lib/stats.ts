@@ -1,3 +1,5 @@
+// src/lib/stats.ts
+
 import { create, all } from "mathjs";
 
 const math = create(all);
@@ -109,51 +111,80 @@ export function computeRollingStats(
 }
 
 // -------------------------------------------------------------------------
-// OLS regression: ocr ~ 1 + alpha·inf_gap + beta·output_gap
+// OLS regression (no intercept):
+// (OCR - r*) = α·inf_gap + β·output_gap + ε
+//
+// Used in all cases because r* is always subtracted from LHS first,
+// whether r* comes from the MPS time-varying series or a slider override.
+// R² is uncentered (appropriate for no-intercept model).
 // -------------------------------------------------------------------------
 
 export function computeOLS(
-  actualRates:   number[],
+  lhsValues:     number[], // OCR - r* per row (pre-computed by caller)
   inflationGaps: number[], // π - π* per row
   outputGaps:    number[],
 ): OlsResult {
-  const n = actualRates.length;
+  const n = lhsValues.length;
   if (n < 10) throw new Error("Need at least 10 observations for OLS");
 
-  // Build matrices
-  const y = math.matrix(actualRates.map((v) => [v]));
+  // X has no intercept column: [infGap, outputGap]
+  const y = math.matrix(lhsValues.map((v) => [v]));
   const X = math.matrix(
-    actualRates.map((_, i) => [1, inflationGaps[i], outputGaps[i]])
+    lhsValues.map((_, i) => [inflationGaps[i], outputGaps[i]])
   );
 
-  // β = (X'X)^{-1} X'y
-  const Xt    = math.transpose(X);
-  const XtX   = math.multiply(Xt, X);
+  const Xt     = math.transpose(X);
+  const XtX    = math.multiply(Xt, X);
   const XtXinv = math.inv(XtX as math.Matrix);
-  const Xty   = math.multiply(Xt, y);
-  const betas = math.multiply(XtXinv, Xty) as math.Matrix;
+  const Xty    = math.multiply(Xt, y);
+  const betas  = math.multiply(XtXinv, Xty) as math.Matrix;
 
   const b = (betas.toArray() as number[][]).map((r) => r[0]);
-  const [intercept, alphaEst, betaEst] = b;
+  const [alphaEst, betaEst] = b;
 
-  // Residuals, R², RMSE
   const Xarr = (X as math.Matrix).toArray() as number[][];
-  const yMean = actualRates.reduce((a, v) => a + v, 0) / n;
-  let ssRes = 0, ssTot = 0;
 
+  // Uncentered R² — correct for no-intercept model
+  let ssRes = 0, ssTotUncentered = 0;
   for (let i = 0; i < n; i++) {
-    const pred = intercept + alphaEst * Xarr[i][1] + betaEst * Xarr[i][2];
-    ssRes += Math.pow(actualRates[i] - pred, 2);
-    ssTot += Math.pow(actualRates[i] - yMean, 2);
+    const pred = alphaEst * Xarr[i][0] + betaEst * Xarr[i][1];
+    ssRes           += Math.pow(lhsValues[i] - pred, 2);
+    ssTotUncentered += Math.pow(lhsValues[i], 2);
   }
 
   return {
     alpha:     alphaEst,
     beta:      betaEst,
-    intercept,
-    rSquared:  1 - ssRes / ssTot,
+    intercept: 0, // always zero — no intercept in this model
+    rSquared:  ssTotUncentered === 0 ? 0 : 1 - ssRes / ssTotUncentered,
     rmse:      Math.sqrt(ssRes / n),
   };
+}
+
+// -------------------------------------------------------------------------
+// R² of a predicted series against actuals (for Taylor/Inertial display)
+// Standard centred R² — not the OLS uncentered version.
+// -------------------------------------------------------------------------
+
+export function computeSeriesR2(
+  actual:    (number | null)[],
+  predicted: (number | null)[],
+): number | null {
+  const pairs = actual
+    .map((a, i) => ({ a, p: predicted[i] }))
+    .filter((x): x is { a: number; p: number } => x.a !== null && x.p !== null);
+
+  const n = pairs.length;
+  if (n < 4) return null;
+
+  const mean   = pairs.reduce((s, x) => s + x.a, 0) / n;
+  let ssTot    = 0;
+  let ssRes    = 0;
+  for (const { a, p } of pairs) {
+    ssTot += (a - mean) ** 2;
+    ssRes += (a - p)    ** 2;
+  }
+  return ssTot === 0 ? null : 1 - ssRes / ssTot;
 }
 
 // -------------------------------------------------------------------------

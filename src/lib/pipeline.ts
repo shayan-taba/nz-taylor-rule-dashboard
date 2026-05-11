@@ -1,3 +1,5 @@
+// src/lib/pipeline.ts
+
 import fs   from "fs";
 import path from "path";
 import { parse as parseCsv } from "csv-parse/sync";

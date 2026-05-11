@@ -1,3 +1,5 @@
+// src/app/page.tsx
+
 "use client";
 import { useEffect } from "react";
 import { useAppStore } from "../store/appStore";

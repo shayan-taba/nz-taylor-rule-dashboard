@@ -1,3 +1,5 @@
+// src/hooks/useChartData.ts
+
 import { useMemo }     from "react";
 import { useAppStore } from "../store/appStore";
 import type { QuarterlyData, ComputedRow } from "../types";
