@@ -3,6 +3,7 @@
 import { useMemo }     from "react";
 import { useAppStore } from "../store/appStore";
 import type { QuarterlyData, ComputedRow } from "../types";
+import { dateKey, toQuarterLabel } from "../lib/format";
 
 export interface MergedRow {
   date:          string;
@@ -43,9 +44,7 @@ export interface LagInfo {
 }
 
 function toLabel(dateStr: string): string {
-  const d = new Date(dateStr);
-  const q = Math.ceil((d.getUTCMonth() + 1) / 3);
-  return `Q${q} ${d.getUTCFullYear()}`;
+  return toQuarterLabel(dateStr);
 }
 
 function getInflationField(raw: QuarterlyData, measure: string): number | null {
@@ -124,20 +123,20 @@ export function useChartData(): MergedRow[] {
 
   return useMemo(() => {
     const computedMap = new Map<string, ComputedRow>(
-      computedSeries.map((r) => [r.date.split("T")[0], r])
+      computedSeries.map((r) => [dateKey(r.date), r])
     );
 
     return rawSeries
       .filter((r) => {
-        const d = r.date.split("T")[0];
+        const d = dateKey(r.date);
         return d >= dateRange.start && d <= dateRange.end;
       })
       .map((raw): MergedRow => {
-        const dateKey = raw.date.split("T")[0];
-        const comp    = computedMap.get(dateKey);
+        const dateKeyValue = dateKey(raw.date);
+        const comp         = computedMap.get(dateKeyValue);
         return {
-          date:          dateKey,
-          label:         toLabel(dateKey),
+          date:          dateKeyValue,
+          label:         toLabel(dateKeyValue),
           ocr:           raw.ocr,
           taylorRate:    comp?.taylorRate    ?? null,
           inertialRate:  comp?.inertialRate  ?? null,

@@ -4,13 +4,8 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { useChartData } from "../../hooks/useChartData";
+import { tickFilter } from "../../lib/chart";
 import { ChartTooltip } from "../ui/Tooltip";
-
-function tickFilter(data: { label: string }[], maxTicks = 12) {
-  if (data.length <= maxTicks) return (v: string) => v;
-  const step = Math.ceil(data.length / maxTicks);
-  return (_: string, i: number) => (i % step === 0 ? data[i]?.label ?? "" : "");
-}
 
 export function DeviationChart() {
   const data      = useChartData();

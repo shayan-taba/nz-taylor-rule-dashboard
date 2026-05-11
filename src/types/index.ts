@@ -56,7 +56,7 @@ export interface TaylorParams {
 
 export interface OlsContext {
   inflationMeasure: InflationMeasure;
-  userealRStarOverride: boolean;
+  useRealRStarOverride: boolean;
   usePiStarOverride: boolean;
   realRStarOverride?: number;
   piStarOverride?: number;

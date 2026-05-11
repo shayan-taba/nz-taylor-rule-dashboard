@@ -3,6 +3,13 @@ import { useMemo }                       from "react";
 import { useAppStore } from "../../store/appStore";
 import { useChartData, useLagInfo } from "../../hooks/useChartData";
 import { ExportButton } from "./ExportButton";
+import {
+  dateKey,
+  formatPercent,
+  formatSignedPercent,
+  ordinalQuarterLabel,
+  toQuarterLabel,
+} from "../../lib/format";
 
 const MEASURE_LABELS: Record<string, string> = {
   cpiApc:            "CPI HEADLINE",
@@ -12,23 +19,19 @@ const MEASURE_LABELS: Record<string, string> = {
 };
 
 function fmt(v: number | null | undefined, decimals = 2): string {
-  if (v === null || v === undefined) return "—";
-  return v.toFixed(decimals) + "%";
+  return formatPercent(v, decimals);
 }
 
 function fmtSigned(v: number | null | undefined, decimals = 2): string {
-  if (v === null || v === undefined) return "—";
-  return (v >= 0 ? "+" : "") + v.toFixed(decimals) + "%";
+  return formatSignedPercent(v, decimals);
 }
 
 function ordinal(n: number): string {
-  return n === 1 ? "1 quarter" : `${n} quarters`;
+  return ordinalQuarterLabel(n);
 }
 
 function toQLabel(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return `Q${Math.ceil((d.getUTCMonth() + 1) / 3)} ${d.getUTCFullYear()}`;
+  return toQuarterLabel(dateStr);
 }
 
 interface CardProps {
@@ -245,7 +248,7 @@ export function MetricCards() {
 
         {/* Output gap — always current */}
         <Card
-          label={`OUTPUT GAP — ${toQLabel(latestGap?.date.split("T")[0] ?? null)}`}
+          label={`OUTPUT GAP — ${toQLabel(latestGap?.date ? dateKey(latestGap.date) : null)}`}
           value={fmt(latestGap?.outputGap)}
         />
 

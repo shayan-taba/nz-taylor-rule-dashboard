@@ -1,6 +1,9 @@
 // src/lib/stats.ts
 
 import { create, all } from "mathjs";
+import type { TaylorParams, OlsResult, DescriptiveStats } from "../types";
+
+export type { TaylorParams, OlsResult, DescriptiveStats };
 
 const math = create(all);
 
@@ -8,37 +11,12 @@ const math = create(all);
 // Types
 // -------------------------------------------------------------------------
 
-export interface TaylorParams {
-  alpha:          number;  // inflation gap coefficient (default 0.5)
-  beta:           number;  // output gap coefficient   (default 0.5)
-  realRStarOverride?: number;  // overrides per-row r* when set (what-if slider)
-  piStarOverride?: number; // overrides per-row π* when set (what-if slider)
-}
-
 export interface TaylorResult {
   taylorRate:     number;
   compNeutral:    number; // r* nominal — the baseline
   compInfGap:     number; // α(π - π*)
   compOutputGap:  number; // β·gap
   deviation:      number | null;
-}
-
-export interface OlsResult {
-  alpha:     number;
-  beta:      number;
-  intercept: number;
-  rSquared:  number;
-  rmse:      number;
-}
-
-export interface DescriptiveStats {
-  mean:      number;
-  std:       number;
-  skewness:  number;
-  max:       number;
-  min:       number;
-  pctAbove:  number; // % of observations > 0
-  pctBelow:  number; // % of observations < 0
 }
 
 // -------------------------------------------------------------------------
