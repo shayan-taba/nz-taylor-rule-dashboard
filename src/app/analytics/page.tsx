@@ -9,6 +9,7 @@ import { DeviationHistogram } from "../../components/analytics/DeviationHistogra
 import { RollingStatsChart } from "../../components/analytics/RollingStatsChart";
 import { ScatterPlots } from "../../components/analytics/ScatterPlots";
 import { RegimeComparisonTable } from "../../components/analytics/RegimeComparisonTable";
+import { NavBar } from "../../components/ui/NavBar";
 
 export default function AnalyticsPage() {
   const fetchRaw      = useAppStore((s) => s.fetchRaw);
@@ -26,49 +27,7 @@ export default function AnalyticsPage() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
 
       {/* Header */}
-      <header style={{
-        borderBottom:   "1px solid var(--border)",
-        padding:        "0 32px",
-        height:         52,
-        display:        "flex",
-        alignItems:     "center",
-        justifyContent: "space-between",
-        position:       "sticky",
-        top:            0,
-        zIndex:         100,
-        background:     "var(--bg)",
-      }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-          <span className="font-display" style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "-0.01em" }}>
-            RBNZ
-          </span>
-          <span style={{ fontSize: "11px", color: "var(--text-3)", letterSpacing: "0.1em" }}>
-            POLICY TRACKER
-          </span>
-          <span style={{
-            fontSize: "10px", padding: "2px 6px",
-            background: "var(--accent-dim)", color: "var(--accent)",
-            border: "1px solid var(--accent)", borderRadius: "2px",
-            letterSpacing: "0.06em",
-          }}>
-            ANALYTICS
-          </span>
-        </div>
-        <nav style={{ display: "flex", gap: 24, fontSize: "11px", letterSpacing: "0.08em" }}>
-          {[
-            { label: "DASHBOARD",   href: "/"            },
-            { label: "ANALYTICS",   href: "/analytics"   },
-            { label: "METHODOLOGY", href: "/methodology" },
-          ].map(({ label, href }) => (
-            <a key={label} href={href} style={{
-              color:          label === "ANALYTICS" ? "var(--accent)" : "var(--text-3)",
-              textDecoration: "none",
-            }}>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <NavBar />
 
       <main style={{ padding: "24px 32px", maxWidth: 1600, margin: "0 auto" }}>
 

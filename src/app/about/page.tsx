@@ -6,64 +6,7 @@ import { useEffect, useState } from "react";
 import { siGithub } from "simple-icons/icons";
 import { siGmail } from "simple-icons/icons";
 import { SimpleIcon } from "../../components/ui/simpleIcon";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// HEADER
-// ─────────────────────────────────────────────────────────────────────────────
-
-function Header() {
-  return (
-    <header
-      style={{
-        borderBottom: "1px solid var(--border)",
-        padding: "0 32px",
-        height: 52,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        background: "rgba(10,10,10,0.82)",
-        backdropFilter: "blur(10px)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <span
-          className="font-display"
-          style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}
-        >
-          RBNZ
-        </span>
-        <span style={{ fontSize: "11px", color: "var(--text-3)", letterSpacing: "0.1em" }}>
-          POLICY TRACKER
-        </span>
-        <span style={{
-          fontSize: "10px", padding: "2px 6px",
-          background: "var(--accent-dim)", color: "var(--accent)",
-          border: "1px solid var(--accent)", borderRadius: 4, letterSpacing: "0.06em",
-        }}>
-          ABOUT
-        </span>
-      </div>
-      <nav style={{ display: "flex", gap: 24, fontSize: "11px", letterSpacing: "0.08em" }}>
-        {[
-          { label: "DASHBOARD",   href: "/"            },
-          { label: "ANALYTICS",   href: "/analytics"   },
-          { label: "METHODOLOGY", href: "/methodology" },
-          { label: "ABOUT",       href: "/about"       },
-        ].map(({ label, href }) => (
-          <a key={label} href={href} style={{
-            color: label === "ABOUT" ? "var(--accent)" : "var(--text-3)",
-            textDecoration: "none", transition: "color 0.15s",
-          }}>
-            {label}
-          </a>
-        ))}
-      </nav>
-    </header>
-  );
-}
+import { NavBar } from "../../components/ui/NavBar";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PRIMITIVES
@@ -257,7 +200,7 @@ function UpcomingFeature({
 export default function AboutPage() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <Header />
+      <NavBar />
       <main style={{ padding: "40px 32px 90px", maxWidth: 920, margin: "0 auto" }}>
 
         {/* ── DATA SOURCES ────────────────────────────────────────── */}
@@ -418,7 +361,7 @@ export default function AboutPage() {
             title="Real-time data mode"
             description="Switch the platform into a mode that uses the data available at the time of each quarterly MPS release — the output gap, neutral rate, and inflation estimates the RBNZ actually had access to when setting the OCR. Coverage will vary by series and quarter depending on publication history. Where available, this removes the revised-data limitation described in the methodology and enables genuine real-time deviation analysis."
           />
-          
+
           <UpcomingFeature
             status="planned"
             title="Output gap range"

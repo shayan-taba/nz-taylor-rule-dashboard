@@ -11,6 +11,7 @@ import { DecompositionChart } from "../components/dashboard/DecompositionChart";
 import { DeviationChart } from "../components/dashboard/DeviationChart";
 import { ParameterPlayground } from "../components/dashboard/ParameterPlayground";
 import { InflationToggle } from "../components/dashboard/InflationToggle";
+import { NavBar } from "../components/ui/NavBar";
 
 export default function DashboardPage() {
   const fetchRaw = useAppStore((s) => s.fetchRaw);
@@ -47,77 +48,7 @@ export default function DashboardPage() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {/* Header */}
-      <header
-        style={{
-          borderBottom: "1px solid var(--border)",
-          padding: "0 32px",
-          height: 52,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "var(--bg)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-          <span
-            className="font-display"
-            style={{
-              fontSize: "16px",
-              fontWeight: 700,
-              letterSpacing: "-0.01em",
-              color: "var(--text)",
-            }}
-          >
-            RBNZ
-          </span>
-          <span
-            style={{
-              fontSize: "11px",
-              color: "var(--text-3)",
-              letterSpacing: "0.1em",
-            }}
-          >
-            POLICY TRACKER
-          </span>
-          <span
-            style={{
-              fontSize: "10px",
-              padding: "2px 6px",
-              background: "var(--accent-dim)",
-              color: "var(--accent)",
-              border: "1px solid var(--accent)",
-              borderRadius: "2px",
-              letterSpacing: "0.06em",
-            }}
-          >
-            TAYLOR RULE
-          </span>
-        </div>
-        <nav
-          style={{
-            display: "flex",
-            gap: 24,
-            fontSize: "11px",
-            letterSpacing: "0.08em",
-          }}
-        >
-          {["DASHBOARD", "ANALYTICS", "METHODOLOGY"].map((page) => (
-            <a
-              key={page}
-              href={page === "DASHBOARD" ? "/" : `/${page.toLowerCase()}`}
-              style={{
-                color: page === "DASHBOARD" ? "var(--accent)" : "var(--text-3)",
-                textDecoration: "none",
-              }}
-            >
-              {page}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <NavBar />
 
       <main style={{ padding: "24px 32px", maxWidth: 1600, margin: "0 auto" }}>
         {/* Controls bar */}

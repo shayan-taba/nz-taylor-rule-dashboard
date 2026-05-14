@@ -2,41 +2,7 @@
 
 "use client";
 
-function Header() {
-  return (
-    <header
-      style={{
-        borderBottom: "1px solid var(--border)",
-        padding: "0 32px",
-        height: 52,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        background: "rgba(10,10,10,0.82)",
-        backdropFilter: "blur(10px)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <span className="font-display" style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text)" }}>RBNZ</span>
-        <span style={{ fontSize: "11px", color: "var(--text-3)", letterSpacing: "0.1em" }}>POLICY TRACKER</span>
-        <span style={{ fontSize: "10px", padding: "2px 6px", background: "var(--accent-dim)", color: "var(--accent)", border: "1px solid var(--accent)", borderRadius: 4, letterSpacing: "0.06em" }}>METHODOLOGY</span>
-      </div>
-      <nav style={{ display: "flex", gap: 24, fontSize: "11px", letterSpacing: "0.08em" }}>
-        {[
-          { label: "DASHBOARD", href: "/" },
-          { label: "ANALYTICS", href: "/analytics" },
-          { label: "METHODOLOGY", href: "/methodology" },
-          { label: "ABOUT", href: "/about" },
-        ].map(({ label, href }) => (
-          <a key={label} href={href} style={{ color: label === "METHODOLOGY" ? "var(--accent)" : "var(--text-3)", textDecoration: "none", transition: "color 0.15s" }}>{label}</a>
-        ))}
-      </nav>
-    </header>
-  );
-}
+import { NavBar } from "../../components/ui/NavBar";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -70,7 +36,7 @@ function FormulaBlock({ children }: { children: React.ReactNode }) {
 export default function MethodologyPage() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <Header />
+      <NavBar />
       <main style={{ padding: "40px 32px 90px", maxWidth: 920, margin: "0 auto" }}>
 
         <Section title="OVERVIEW">
