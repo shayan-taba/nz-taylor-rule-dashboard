@@ -3,8 +3,15 @@
 "use client";
 import { useChartData } from "../../hooks/useChartData";
 import {
-  ComposedChart, Line, Area, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
+  ComposedChart,
+  Line,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { ChartTooltip } from "../ui/Tooltip";
 import { tickFormatter } from "../../lib/chart";
@@ -13,22 +20,48 @@ export function RollingStatsChart() {
   const data = useChartData();
 
   return (
-    <div style={{
-      background: "var(--bg-2)",
-      border:     "1px solid var(--border)",
-      padding:    "20px",
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <span style={{ fontSize: "10px", letterSpacing: "0.1em", color: "var(--text-3)" }}>
+    <div
+      style={{
+        background: "var(--bg-2)",
+        border: "1px solid var(--border)",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        <span
+          style={{
+            fontSize: "10px",
+            letterSpacing: "0.1em",
+            color: "var(--text-3)",
+          }}
+        >
           ROLLING 4-QUARTER STATISTICS
         </span>
-        <div style={{ display: "flex", gap: 20, fontSize: "10px", color: "var(--text-2)" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 20,
+            fontSize: "10px",
+            color: "var(--text-2)",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <div style={{ width: 16, height: 2, background: "var(--accent)" }} />
+            <div
+              style={{ width: 16, height: 2, background: "var(--accent)" }}
+            />
             <span>Rolling Mean Deviation</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <div style={{ width: 16, height: 2, background: "var(--accent-2)" }} />
+            <div
+              style={{ width: 16, height: 2, background: "var(--accent-2)" }}
+            />
             <span>Rolling Std Dev</span>
           </div>
         </div>
@@ -36,10 +69,12 @@ export function RollingStatsChart() {
 
       {/* Two stacked panels sharing the same x-axis */}
       <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-
         {/* Panel 1: rolling mean */}
         <ResponsiveContainer width="100%" height={180}>
-          <ComposedChart data={data} margin={{ top: 4, right: 20, bottom: 0, left: -10 }}>
+          <ComposedChart
+            data={data}
+            margin={{ top: 4, right: 20, bottom: 0, left: -10 }}
+          >
             <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
             <XAxis
               dataKey="timestamp"
@@ -52,12 +87,20 @@ export function RollingStatsChart() {
               minTickGap={60}
               padding={{ left: 8, right: 24 }}
               tickFormatter={tickFormatter}
-              tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
+              tick={{
+                fontSize: 9,
+                fill: "var(--text-3)",
+                fontFamily: "inherit",
+              }}
               axisLine={{ stroke: "var(--border)" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
+              tick={{
+                fontSize: 9,
+                fill: "var(--text-3)",
+                fontFamily: "inherit",
+              }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v > 0 ? "+" : ""}${v.toFixed(1)}pp`}
@@ -80,7 +123,10 @@ export function RollingStatsChart() {
 
         {/* Panel 2: rolling std */}
         <ResponsiveContainer width="100%" height={140}>
-          <ComposedChart data={data} margin={{ top: 4, right: 20, bottom: 0, left: -10 }}>
+          <ComposedChart
+            data={data}
+            margin={{ top: 4, right: 20, bottom: 0, left: -10 }}
+          >
             <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
             <XAxis
               dataKey="timestamp"
@@ -93,12 +139,20 @@ export function RollingStatsChart() {
               minTickGap={60}
               padding={{ left: 8, right: 24 }}
               tickFormatter={tickFormatter}
-              tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
+              tick={{
+                fontSize: 9,
+                fill: "var(--text-3)",
+                fontFamily: "inherit",
+              }}
               axisLine={{ stroke: "var(--border)" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 9, fill: "var(--text-3)", fontFamily: "inherit" }}
+              tick={{
+                fontSize: 9,
+                fill: "var(--text-3)",
+                fontFamily: "inherit",
+              }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v.toFixed(1)}pp`}
@@ -117,7 +171,6 @@ export function RollingStatsChart() {
             />
           </ComposedChart>
         </ResponsiveContainer>
-
       </div>
     </div>
   );

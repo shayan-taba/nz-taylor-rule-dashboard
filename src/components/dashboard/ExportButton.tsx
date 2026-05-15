@@ -11,47 +11,49 @@ interface Props {
 
 function buildRows(
   data: ReturnType<typeof useChartData>,
-  inflationMeasure: string
+  inflationMeasure: string,
 ): ExportRow[] {
   return data.map((row) => ({
-    date:             row.date,
-    ocr:              row.ocr,
-    taylorRate:       row.taylorRate,
-    inertialRate:     row.inertialRate,
-    deviation:        row.deviation,
-    compNeutral:      row.compNeutral,
-    compInfGap:       row.compInfGap,
-    compOutputGap:    row.compOutputGap,
-    outputGap:        row.outputGap,
-    inflation:        row.inflation,
+    date: row.date,
+    ocr: row.ocr,
+    taylorRate: row.taylorRate,
+    inertialRate: row.inertialRate,
+    deviation: row.deviation,
+    compNeutral: row.compNeutral,
+    compInfGap: row.compInfGap,
+    compOutputGap: row.compOutputGap,
+    outputGap: row.outputGap,
+    inflation: row.inflation,
     inflationMeasure,
-    rStar:            row.rStar,
-    piStar:           row.piStar,
-    urate:            row.urate,
-    nzdUsd:           row.nzdUsd,
-    gdpApc:           row.gdpApc,
+    rStar: row.rStar,
+    piStar: row.piStar,
+    urate: row.urate,
+    nzdUsd: row.nzdUsd,
+    gdpApc: row.gdpApc,
   }));
 }
 
 function toCSV(rows: ExportRow[]): string {
   if (!rows.length) return "";
   const headers = Object.keys(rows[0]) as (keyof ExportRow)[];
-  const header  = headers.join(",");
-  const lines   = rows.map((row) =>
-    headers.map((h) => {
-      const v = row[h];
-      if (v === null || v === undefined) return "";
-      return String(v);
-    }).join(",")
+  const header = headers.join(",");
+  const lines = rows.map((row) =>
+    headers
+      .map((h) => {
+        const v = row[h];
+        if (v === null || v === undefined) return "";
+        return String(v);
+      })
+      .join(","),
   );
   return [header, ...lines].join("\n");
 }
 
 function download(content: string, filename: string, mimeType: string) {
   const blob = new Blob([content], { type: mimeType });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement("a");
-  a.href     = url;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
@@ -67,19 +69,23 @@ function dateRangeSlug(start: string, end: string): string {
 }
 
 export function ExportButton({ format }: Props) {
-  const data             = useChartData();
+  const data = useChartData();
   const inflationMeasure = useAppStore((s) => s.inflationMeasure);
-  const dateRange        = useAppStore((s) => s.dateRange);
+  const dateRange = useAppStore((s) => s.dateRange);
 
   const handleExport = () => {
-    const rows  = buildRows(data, inflationMeasure);
-    const slug  = dateRangeSlug(dateRange.start, dateRange.end);
+    const rows = buildRows(data, inflationMeasure);
+    const slug = dateRangeSlug(dateRange.start, dateRange.end);
     const fname = `rbnz-policy-tracker_${slug}`;
 
     if (format === "csv") {
       download(toCSV(rows), `${fname}.csv`, "text/csv");
     } else {
-      download(JSON.stringify(rows, null, 2), `${fname}.json`, "application/json");
+      download(
+        JSON.stringify(rows, null, 2),
+        `${fname}.json`,
+        "application/json",
+      );
     }
   };
 
@@ -88,16 +94,16 @@ export function ExportButton({ format }: Props) {
       onClick={handleExport}
       disabled={!data.length}
       style={{
-        padding:       "4px 12px",
-        fontSize:      "10px",
+        padding: "4px 12px",
+        fontSize: "10px",
         letterSpacing: "0.06em",
-        fontFamily:    "inherit",
-        background:    "transparent",
-        color:         data.length ? "var(--text-2)" : "var(--text-3)",
-        border:        "1px solid var(--border)",
-        borderRadius:  "2px",
-        cursor:        data.length ? "pointer" : "not-allowed",
-        transition:    "all 0.15s",
+        fontFamily: "inherit",
+        background: "transparent",
+        color: data.length ? "var(--text-2)" : "var(--text-3)",
+        border: "1px solid var(--border)",
+        borderRadius: "2px",
+        cursor: data.length ? "pointer" : "not-allowed",
+        transition: "all 0.15s",
       }}
       onMouseEnter={(e) => {
         if (data.length) {
@@ -107,7 +113,9 @@ export function ExportButton({ format }: Props) {
       }}
       onMouseLeave={(e) => {
         (e.target as HTMLButtonElement).style.borderColor = "var(--border)";
-        (e.target as HTMLButtonElement).style.color = data.length ? "var(--text-2)" : "var(--text-3)";
+        (e.target as HTMLButtonElement).style.color = data.length
+          ? "var(--text-2)"
+          : "var(--text-3)";
       }}
     >
       ↓ {format.toUpperCase()}

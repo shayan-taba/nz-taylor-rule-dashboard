@@ -1,10 +1,6 @@
 // src/store/modelSpecification.ts
 
-import type {
-  InflationMeasure,
-  TaylorParams,
-  OlsResult,
-} from "../types";
+import type { InflationMeasure, TaylorParams, OlsResult } from "../types";
 
 /**
  * ONLY variables that affect regression estimation
@@ -67,9 +63,7 @@ export function buildEstimationSpecification(args: {
 
     usePiStarOverride,
 
-    piStarOverride: usePiStarOverride
-      ? params.piStarOverride
-      : undefined,
+    piStarOverride: usePiStarOverride ? params.piStarOverride : undefined,
   };
 }
 
@@ -83,7 +77,7 @@ export function buildEstimationSpecification(args: {
  * - future memoization
  */
 export function serializeEstimationSpecification(
-  spec: EstimationSpecification
+  spec: EstimationSpecification,
 ): string {
   return JSON.stringify(spec);
 }
@@ -94,7 +88,7 @@ export function serializeEstimationSpecification(
  */
 export function slidersMatchOLS(
   params: TaylorParams,
-  ols: OlsResult | null
+  ols: OlsResult | null,
 ): boolean {
   if (!ols) return false;
 

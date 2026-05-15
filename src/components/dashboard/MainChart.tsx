@@ -21,11 +21,8 @@ interface Props {
   height?: number;
 }
 
-export function MainChart({
-  height = 320,
-}: Props) {
-  const showInertial =
-    useAppStore((s) => s.showInertial);
+export function MainChart({ height = 320 }: Props) {
+  const showInertial = useAppStore((s) => s.showInertial);
 
   const data = useChartData();
 
@@ -109,10 +106,7 @@ export function MainChart({
       {/* Chart */}
       {/* ───────────────────────────────────── */}
 
-      <ResponsiveContainer
-        width="100%"
-        height={height}
-      >
+      <ResponsiveContainer width="100%" height={height}>
         <ComposedChart
           data={data}
           margin={{
@@ -123,10 +117,7 @@ export function MainChart({
           }}
         >
           {/* Grid */}
-          <CartesianGrid
-            strokeDasharray="0"
-            stroke="var(--border)"
-          />
+          <CartesianGrid strokeDasharray="0" stroke="var(--border)" />
 
           {/* ───────────────────────────── */}
           {/* X Axis — CONTINUOUS TIME */}
@@ -174,9 +165,7 @@ export function MainChart({
           {/* Tooltip */}
           {/* ───────────────────────────── */}
 
-          <Tooltip
-            content={<ChartTooltip />}
-          />
+          <Tooltip content={<ChartTooltip />} />
 
           {/* ───────────────────────────── */}
           {/* π* Target */}

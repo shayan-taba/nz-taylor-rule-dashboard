@@ -19,9 +19,7 @@ export const db =
   new PrismaClient({
     adapter,
     log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error"]
-        : ["error"],
+      process.env.NODE_ENV === "development" ? ["query", "error"] : ["error"],
   });
 
 if (process.env.NODE_ENV !== "production") {

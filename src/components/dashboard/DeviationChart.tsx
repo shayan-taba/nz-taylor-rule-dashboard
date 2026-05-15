@@ -23,9 +23,8 @@ interface Props {
   height?: number;
 }
 
-export function DeviationChart({
-  height = 320,
-}: Props) {  const data = useChartData();
+export function DeviationChart({ height = 320 }: Props) {
+  const data = useChartData();
 
   // Split positive/negative deviations
   const enriched = data.map((row) => ({

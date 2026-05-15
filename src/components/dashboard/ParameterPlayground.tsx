@@ -241,9 +241,7 @@ function TaylorEquation({
     gap: 1,
   };
 
-  const valStyle = (
-    color?: string
-  ): React.CSSProperties => ({
+  const valStyle = (color?: string): React.CSSProperties => ({
     fontSize: "13px",
     fontWeight: 500,
     color: color ?? "var(--text-2)",
@@ -306,11 +304,7 @@ function TaylorEquation({
           <span style={opStyle}>=</span>
 
           <div style={termStyle}>
-            <span
-              style={valStyle(
-                useRStar ? OVERRIDE_COLOR : undefined
-              )}
-            >
+            <span style={valStyle(useRStar ? OVERRIDE_COLOR : undefined)}>
               {useRStar && realRStarOverride !== undefined
                 ? `${realRStarOverride.toFixed(2)} + π`
                 : "r*"}
@@ -324,9 +318,7 @@ function TaylorEquation({
           <span style={opStyle}>+</span>
 
           <div style={termStyle}>
-            <span style={valStyle(RESPONSE_COLOR)}>
-              {alpha.toFixed(2)}
-            </span>
+            <span style={valStyle(RESPONSE_COLOR)}>{alpha.toFixed(2)}</span>
             <span style={labelStyle}>α</span>
           </div>
 
@@ -338,19 +330,13 @@ function TaylorEquation({
           </div>
 
           <div style={termStyle}>
-            <span
-              style={valStyle(
-                usePiStar ? OVERRIDE_COLOR : undefined
-              )}
-            >
+            <span style={valStyle(usePiStar ? OVERRIDE_COLOR : undefined)}>
               {usePiStar && piStarOverride !== undefined
                 ? piStarOverride.toFixed(2)
                 : "π*"}
             </span>
 
-            <span style={labelStyle}>
-              {usePiStar ? "override" : "hist."}
-            </span>
+            <span style={labelStyle}>{usePiStar ? "override" : "hist."}</span>
           </div>
 
           <div style={termStyle}>
@@ -361,9 +347,7 @@ function TaylorEquation({
           <span style={opStyle}>+</span>
 
           <div style={termStyle}>
-            <span style={valStyle(RESPONSE_COLOR)}>
-              {beta.toFixed(2)}
-            </span>
+            <span style={valStyle(RESPONSE_COLOR)}>{beta.toFixed(2)}</span>
 
             <span style={labelStyle}>β</span>
           </div>
@@ -421,9 +405,7 @@ function TaylorEquation({
             <span style={opStyle}>+</span>
 
             <div style={termStyle}>
-              <span style={valStyle()}>
-                {(1 - rho).toFixed(2)}
-              </span>
+              <span style={valStyle()}>{(1 - rho).toFixed(2)}</span>
 
               <span style={labelStyle}>1−ρ</span>
             </div>
@@ -441,13 +423,7 @@ function TaylorEquation({
   );
 }
 
-function StatRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function StatRow({ label, value }: { label: string; value: string }) {
   return (
     <div
       style={{
@@ -472,87 +448,37 @@ function StatRow({
 
 // ─── Main component ─────────────────────────────────────────────────────────
 export function ParameterPlayground() {
-  const params =
-    useAppStore((s) => s.params);
+  const params = useAppStore((s) => s.params);
 
-  const setParams =
-    useAppStore((s) => s.setParams);
+  const setParams = useAppStore((s) => s.setParams);
 
-  const inflationMeasure =
-    useAppStore(
-      (s) => s.inflationMeasure
-    );
+  const inflationMeasure = useAppStore((s) => s.inflationMeasure);
 
-  const dateRange =
-    useAppStore(
-      (s) => s.dateRange
-    );
+  const dateRange = useAppStore((s) => s.dateRange);
 
-  const useRealRStarOverride =
-    useAppStore(
-      (s) =>
-        s.useRealRStarOverride
-    );
+  const useRealRStarOverride = useAppStore((s) => s.useRealRStarOverride);
 
-  const usePiStarOverride =
-    useAppStore(
-      (s) =>
-        s.usePiStarOverride
-    );
+  const usePiStarOverride = useAppStore((s) => s.usePiStarOverride);
 
-  const setUseRealRStarOverride =
-    useAppStore(
-      (s) =>
-        s.setUseRealRStarOverride
-    );
+  const setUseRealRStarOverride = useAppStore((s) => s.setUseRealRStarOverride);
 
-  const setUsePiStarOverride =
-    useAppStore(
-      (s) =>
-        s.setUsePiStarOverride
-    );
+  const setUsePiStarOverride = useAppStore((s) => s.setUsePiStarOverride);
 
-  const showInertial =
-    useAppStore(
-      (s) => s.showInertial
-    );
+  const showInertial = useAppStore((s) => s.showInertial);
 
-  const setShowInertial =
-    useAppStore(
-      (s) =>
-        s.setShowInertial
-    );
+  const setShowInertial = useAppStore((s) => s.setShowInertial);
 
-  const fetchComputed =
-    useAppStore(
-      (s) => s.fetchComputed
-    );
+  const fetchComputed = useAppStore((s) => s.fetchComputed);
 
-  const isLoadingComputed =
-    useAppStore(
-      (s) =>
-        s.isLoadingComputed
-    );
+  const isLoadingComputed = useAppStore((s) => s.isLoadingComputed);
 
-  const olsResult =
-    useAppStore(
-      (s) => s.olsResult
-    );
+  const olsResult = useAppStore((s) => s.olsResult);
 
-  const olsSpecHash =
-    useAppStore(
-      (s) => s.olsSpecHash
-    );
+  const olsSpecHash = useAppStore((s) => s.olsSpecHash);
 
-  const ocrFitR2 =
-    useAppStore(
-      (s) => s.ocrFitR2
-    );
+  const ocrFitR2 = useAppStore((s) => s.ocrFitR2);
 
-  const inertialR2 =
-    useAppStore(
-      (s) => s.inertialR2
-    );
+  const inertialR2 = useAppStore((s) => s.inertialR2);
 
   // ───────────────────────────────────────────
   // Debounce computed updates
@@ -572,81 +498,59 @@ export function ParameterPlayground() {
 
       useRealRStarOverride,
       usePiStarOverride,
-    ]
+    ],
   );
 
   // ───────────────────────────────────────────
   // Canonical spec comparison
   // ───────────────────────────────────────────
 
-  const currentSpec =
-    buildEstimationSpecification({
-      inflationMeasure,
-      dateRange,
+  const currentSpec = buildEstimationSpecification({
+    inflationMeasure,
+    dateRange,
 
-      useRealRStarOverride,
-      usePiStarOverride,
+    useRealRStarOverride,
+    usePiStarOverride,
 
-      params,
-    });
+    params,
+  });
 
-  const currentSpecHash =
-    serializeEstimationSpecification(
-      currentSpec
-    );
+  const currentSpecHash = serializeEstimationSpecification(currentSpec);
 
   /**
    * "stale" means:
    * estimation assumptions changed
    */
-  const isOlsContextStale =
-    !!olsSpecHash &&
-    olsSpecHash !== currentSpecHash;
+  const isOlsContextStale = !!olsSpecHash && olsSpecHash !== currentSpecHash;
 
   /**
    * "matches" means:
    * sliders equal estimated coefficients
    */
-  const slidersMatchLastOLS =
-    slidersMatchOLS(
-      params,
-      olsResult
-    );
+  const slidersMatchLastOLS = slidersMatchOLS(params, olsResult);
 
-  const isOlsCurrent =
-    slidersMatchLastOLS &&
-    !isOlsContextStale;
+  const isOlsCurrent = slidersMatchLastOLS && !isOlsContextStale;
 
   // ───────────────────────────────────────────
   // Button state
   // ───────────────────────────────────────────
 
-  let olsButtonLabel =
-    "ESTIMATE α & β FROM DATA (OLS)";
+  let olsButtonLabel = "ESTIMATE α & β FROM DATA (OLS)";
 
-  let olsButtonStyles:
-    React.CSSProperties = {
-    background:
-      "var(--accent-dim)",
+  let olsButtonStyles: React.CSSProperties = {
+    background: "var(--accent-dim)",
 
-    color:
-      "var(--accent)",
+    color: "var(--accent)",
 
-    border:
-      "1px solid var(--accent)",
+    border: "1px solid var(--accent)",
   };
 
   if (isLoadingComputed) {
-    olsButtonLabel =
-      "RE-ESTIMATING FROM DATA...";
+    olsButtonLabel = "RE-ESTIMATING FROM DATA...";
   } else if (isOlsCurrent) {
-    olsButtonLabel =
-      "✓ MATCHES CURRENT OLS ESTIMATES";
-  } else if (
-    isOlsContextStale
-  ) {
-    olsButtonLabel =
-      "OLS ESTIMATES OUTDATED — RE-RUN";
+    olsButtonLabel = "✓ MATCHES CURRENT OLS ESTIMATES";
+  } else if (isOlsContextStale) {
+    olsButtonLabel = "OLS ESTIMATES OUTDATED — RE-RUN";
 
     olsButtonStyles = {
       background: WARNING_BG,
@@ -778,8 +682,8 @@ export function ParameterPlayground() {
               margin: 0,
             }}
           >
-            Runs OLS of (OCR − r*) on inflation gap and
-            output gap over the selected window.
+            Runs OLS of (OCR − r*) on inflation gap and output gap over the
+            selected window.
           </p>
 
           {isOlsContextStale && (
@@ -790,10 +694,8 @@ export function ParameterPlayground() {
                 lineHeight: 1.5,
               }}
             >
-              Parameters or assumptions changed since
-              the last OLS estimation. Re-run regression
-              to estimate coefficients for the current
-              setup.
+              Parameters or assumptions changed since the last OLS estimation.
+              Re-run regression to estimate coefficients for the current setup.
             </div>
           )}
 
@@ -806,9 +708,7 @@ export function ParameterPlayground() {
               fontFamily: "inherit",
               fontSize: "10px",
               letterSpacing: "0.06em",
-              cursor: isLoadingComputed
-                ? "not-allowed"
-                : "pointer",
+              cursor: isLoadingComputed ? "not-allowed" : "pointer",
               opacity: isLoadingComputed ? 0.6 : 1,
               transition: "all 0.15s",
               ...olsButtonStyles,
@@ -850,14 +750,10 @@ export function ParameterPlayground() {
                 <span
                   style={{
                     fontSize: "9px",
-                    color: isOlsContextStale
-                      ? WARNING_COLOR
-                      : "var(--text-3)",
+                    color: isOlsContextStale ? WARNING_COLOR : "var(--text-3)",
                   }}
                 >
-                  {isOlsContextStale
-                    ? "STALE"
-                    : "CURRENT"}
+                  {isOlsContextStale ? "STALE" : "CURRENT"}
                 </span>
               </div>
 
@@ -876,10 +772,7 @@ export function ParameterPlayground() {
                 value={olsResult.rSquared.toFixed(3)}
               />
 
-              <StatRow
-                label="RMSE"
-                value={olsResult.rmse.toFixed(3) + "pp"}
-              />
+              <StatRow label="RMSE" value={olsResult.rmse.toFixed(3) + "pp"} />
 
               {!slidersMatchLastOLS && (
                 <button
@@ -940,9 +833,7 @@ export function ParameterPlayground() {
           min={-1}
           max={4}
           step={0.25}
-          onChange={(v) =>
-            setParams({ realRStarOverride: v })
-          }
+          onChange={(v) => setParams({ realRStarOverride: v })}
           disabled={!useRealRStarOverride}
           accentColor={OVERRIDE_COLOR}
         />
@@ -975,9 +866,7 @@ export function ParameterPlayground() {
           min={0}
           max={4}
           step={0.25}
-          onChange={(v) =>
-            setParams({ piStarOverride: v })
-          }
+          onChange={(v) => setParams({ piStarOverride: v })}
           disabled={!usePiStarOverride}
           accentColor={OVERRIDE_COLOR}
         />
@@ -1024,20 +913,12 @@ export function ParameterPlayground() {
 
           <StatRow
             label="Taylor Rule"
-            value={
-              ocrFitR2 !== null
-                ? ocrFitR2.toFixed(3)
-                : "—"
-            }
+            value={ocrFitR2 !== null ? ocrFitR2.toFixed(3) : "—"}
           />
 
           <StatRow
             label="Inertial Taylor"
-            value={
-              inertialR2 !== null
-                ? inertialR2.toFixed(3)
-                : "—"
-            }
+            value={inertialR2 !== null ? inertialR2.toFixed(3) : "—"}
           />
         </div>
       </div>

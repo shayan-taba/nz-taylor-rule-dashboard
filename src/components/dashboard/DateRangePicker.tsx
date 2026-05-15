@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { useAppStore } from "../../store/appStore";
 
 export function DateRangePicker() {
-  const dateRange    = useAppStore((s) => s.dateRange);
+  const dateRange = useAppStore((s) => s.dateRange);
   const setDateRange = useAppStore((s) => s.setDateRange);
 
   const [localStart, setLocalStart] = useState(dateRange.start);
-  const [localEnd,   setLocalEnd]   = useState(dateRange.end);
+  const [localEnd, setLocalEnd] = useState(dateRange.end);
 
   useEffect(() => {
     setLocalStart(dateRange.start);
@@ -21,20 +21,26 @@ export function DateRangePicker() {
   };
 
   const inputStyle: React.CSSProperties = {
-    background:    "var(--bg-3)",
-    border:        "1px solid var(--border)",
-    borderRadius:  "2px",
-    color:         "var(--text)",
-    fontFamily:    "inherit",
-    fontSize:      "11px",
-    padding:       "4px 8px",
-    outline:       "none",
-    colorScheme:   "dark",
+    background: "var(--bg-3)",
+    border: "1px solid var(--border)",
+    borderRadius: "2px",
+    color: "var(--text)",
+    fontFamily: "inherit",
+    fontSize: "11px",
+    padding: "4px 8px",
+    outline: "none",
+    colorScheme: "dark",
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span style={{ fontSize: "10px", color: "var(--text-3)", letterSpacing: "0.1em" }}>
+      <span
+        style={{
+          fontSize: "10px",
+          color: "var(--text-3)",
+          letterSpacing: "0.1em",
+        }}
+      >
         CUSTOM
       </span>
       <input
@@ -57,15 +63,15 @@ export function DateRangePicker() {
       <button
         onClick={apply}
         style={{
-          padding:      "4px 12px",
-          fontSize:     "11px",
+          padding: "4px 12px",
+          fontSize: "11px",
           letterSpacing: "0.06em",
-          fontFamily:   "inherit",
-          background:   "transparent",
-          color:        "var(--accent)",
-          border:       "1px solid var(--accent)",
+          fontFamily: "inherit",
+          background: "transparent",
+          color: "var(--accent)",
+          border: "1px solid var(--accent)",
           borderRadius: "2px",
-          cursor:       "pointer",
+          cursor: "pointer",
         }}
       >
         APPLY

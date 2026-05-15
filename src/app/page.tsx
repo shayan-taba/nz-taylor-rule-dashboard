@@ -163,7 +163,7 @@ export default function DashboardPage() {
                   </div>
                   {expandedCharts.main && (
                     <div style={{ padding: "16px 0" }}>
-                      <MainChart height={mainChartHeight}  />
+                      <MainChart height={mainChartHeight} />
                     </div>
                   )}
                 </div>
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                   </div>
                   {expandedCharts.decomposition && (
                     <div style={{ padding: "16px 0" }}>
-                      <DecompositionChart height={secondaryChartHeight}/>
+                      <DecompositionChart height={secondaryChartHeight} />
                     </div>
                   )}
                 </div>

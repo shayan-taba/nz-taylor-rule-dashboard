@@ -3,39 +3,40 @@
 // RBNZ Monetary Policy Statement Parser
 
 import * as XLSX from "xlsx";
-import fs        from "fs";
-import path      from "path";
+import fs from "fs";
+import path from "path";
 
 const NEEDED: Record<string, keyof MpsRow> = {
-  gdp:       "gdp",
-  gdpqpc:    "gdpQpc",
-  gdpapc:    "gdpApc",
+  gdp: "gdp",
+  gdpqpc: "gdpQpc",
+  gdpapc: "gdpApc",
   outputgap: "outputGap",
-  urate:     "urate",
-  p:         "cpiIndex",
-  pqpc:      "cpiQpc",
-  papc:      "cpiApc",
-  ocr:       "ocr",
+  urate: "urate",
+  p: "cpiIndex",
+  pqpc: "cpiQpc",
+  papc: "cpiApc",
+  ocr: "ocr",
 };
 
 export interface MpsRow {
-  date:      Date;
-  gdp:       number | null;
-  gdpQpc:    number | null;
-  gdpApc:    number | null;
+  date: Date;
+  gdp: number | null;
+  gdpQpc: number | null;
+  gdpApc: number | null;
   outputGap: number | null;
-  urate:     number | null;
-  cpiIndex:  number | null;
-  cpiQpc:    number | null;
-  cpiApc:    number | null;
-  ocr:       number | null;
+  urate: number | null;
+  cpiIndex: number | null;
+  cpiQpc: number | null;
+  cpiApc: number | null;
+  ocr: number | null;
 }
 
-export function parseMps(
-  filePath: string
-): { rows: MpsRow[]; vintage: string } {
+export function parseMps(filePath: string): {
+  rows: MpsRow[];
+  vintage: string;
+} {
   const buffer = fs.readFileSync(filePath);
-  const wb     = XLSX.read(buffer, { type: "buffer", cellDates: true });
+  const wb = XLSX.read(buffer, { type: "buffer", cellDates: true });
 
   // ------------------------------------------------------------------
   // 1. VINTAGE FROM "Contents" SHEET
@@ -58,7 +59,9 @@ export function parseMps(
   if (typeof firstCell === "string") {
     // Example: "Monetary Policy Statement - February 2026"
     const match = firstCell.match(/-\s*(.+)$/);
-    vintage = match ? match[1].trim().toLowerCase().replace(" ", "") : firstCell;
+    vintage = match
+      ? match[1].trim().toLowerCase().replace(" ", "")
+      : firstCell;
   }
 
   // ------------------------------------------------------------------
@@ -75,7 +78,7 @@ export function parseMps(
   });
 
   // Identifiers are on row 6 (zero-indexed)
-  const identifiers = raw[6] as string[]; 
+  const identifiers = raw[6] as string[];
   const colIndex: Partial<Record<keyof MpsRow, number>> = {};
   for (const [id, field] of Object.entries(NEEDED)) {
     const idx = identifiers.indexOf(id);
@@ -101,15 +104,15 @@ export function parseMps(
 
     rows.push({
       date,
-      gdp:       get("gdp"),
-      gdpQpc:    get("gdpQpc"),
-      gdpApc:    get("gdpApc"),
+      gdp: get("gdp"),
+      gdpQpc: get("gdpQpc"),
+      gdpApc: get("gdpApc"),
       outputGap: get("outputGap"),
-      urate:     get("urate"),
-      cpiIndex:  get("cpiIndex"),
-      cpiQpc:    get("cpiQpc"),
-      cpiApc:    get("cpiApc"),
-      ocr:       get("ocr"),
+      urate: get("urate"),
+      cpiIndex: get("cpiIndex"),
+      cpiQpc: get("cpiQpc"),
+      cpiApc: get("cpiApc"),
+      ocr: get("ocr"),
     });
   }
 

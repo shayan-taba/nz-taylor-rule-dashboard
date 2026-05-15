@@ -23,9 +23,7 @@ interface Props {
   height?: number;
 }
 
-export function DecompositionChart({
-  height = 320,
-}: Props) {
+export function DecompositionChart({ height = 320 }: Props) {
   const data = useChartData();
 
   return (

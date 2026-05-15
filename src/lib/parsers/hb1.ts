@@ -68,16 +68,16 @@ function quarterEnd(date: Date): Date {
   const y = date.getFullYear();
   const m = date.getMonth();
 
-  if (m <= 2) return new Date(y, 2, 31);  // Q1 end (Mar 31)
-  if (m <= 5) return new Date(y, 5, 30);  // Q2 end (Jun 30)
-  if (m <= 8) return new Date(y, 8, 30);  // Q3 end (Sep 30)
+  if (m <= 2) return new Date(y, 2, 31); // Q1 end (Mar 31)
+  if (m <= 5) return new Date(y, 5, 30); // Q2 end (Jun 30)
+  if (m <= 8) return new Date(y, 8, 30); // Q3 end (Sep 30)
 
-  return new Date(y, 11, 31);             // Q4 end (Dec 31)
+  return new Date(y, 11, 31); // Q4 end (Dec 31)
 }
 
 // Aggregate monthly values into quarterly averages
 function averageToQuarterly(
-  monthly: { date: Date; nzdUsd: number }[]
+  monthly: { date: Date; nzdUsd: number }[],
 ): QuarterlyNzdUsd[] {
   const buckets = new Map<string, { qEnd: Date; values: number[] }>();
 
@@ -96,11 +96,13 @@ function averageToQuarterly(
   }
 
   // Compute quarterly averages
-  return Array.from(buckets.values())
-    .map(({ qEnd, values }) => ({
-      date: qEnd,
-      nzdUsd: values.reduce((a, b) => a + b, 0) / values.length,
-    }))
-    // Sort chronologically
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  return (
+    Array.from(buckets.values())
+      .map(({ qEnd, values }) => ({
+        date: qEnd,
+        nzdUsd: values.reduce((a, b) => a + b, 0) / values.length,
+      }))
+      // Sort chronologically
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+  );
 }
