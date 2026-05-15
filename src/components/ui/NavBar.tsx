@@ -47,17 +47,18 @@ export function NavBar() {
             color: "var(--text)",
           }}
         >
-          RBNZ
+          Policy Tracker
         </span>
 
         <span
           style={{
-            fontSize: "11px",
+            fontSize: "10px",
             color: "var(--text-3)",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.12em",
+            marginLeft: 6,
           }}
         >
-          POLICY TRACKER
+          NZ
         </span>
 
         {badge && (
