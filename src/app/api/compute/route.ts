@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       taylorRate: result.taylorRate,
       inertialRate,
       deviation: result.deviation,
-      compNeutral: result.compNeutral,
+      compNeutral: result.compNeutralNominal,
       compInfGap: result.compInfGap,
       compOutputGap: result.compOutputGap,
       urate: row.urate,

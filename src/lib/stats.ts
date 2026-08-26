@@ -13,7 +13,7 @@ const math = create(all);
 
 export interface TaylorResult {
   taylorRate: number;
-  compNeutral: number; // r* nominal — the baseline
+  compNeutralNominal: number; // r* nominal — the baseline
   compInfGap: number; // α(π - π*)
   compOutputGap: number; // β·gap
   deviation: number | null;
@@ -37,16 +37,17 @@ export function computeTaylorRate(
       ? params.realRStarOverride + inflation // If real neutral override give,
       : // we must add inflation rate (or long run inflation expectations).
         rStar; // rStar is already neutral per the MPS
-  const pi = params.piStarOverride ?? piStar;
+  const pi_target = params.piStarOverride ?? piStar;
   const { alpha, beta } = params;
 
-  const compNeutral = r;
-  const compInfGap = alpha * (inflation - pi);
+  const compNeutralNominal = r;
+  const compInfGap = alpha * (inflation - pi_target);
   const compOutputGap = beta * outputGap;
-  const taylorRate = r + compInfGap + compOutputGap;
+  const long_term_inflation_expectation = 2.0;
+  const taylorRate = (r - long_term_inflation_expectation) + inflation + compInfGap + compOutputGap;
   const deviation = actualOcr !== undefined ? actualOcr - taylorRate : null;
 
-  return { taylorRate, compNeutral, compInfGap, compOutputGap, deviation };
+  return { taylorRate, compNeutralNominal, compInfGap, compOutputGap, deviation };
 }
 
 // -------------------------------------------------------------------------
